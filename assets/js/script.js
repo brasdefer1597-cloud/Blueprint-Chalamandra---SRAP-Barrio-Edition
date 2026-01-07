@@ -258,22 +258,7 @@ function revealHatInsight(element, hatType, insightText) {
     updateUI();
 }
 
-// === 6. MONETIZACIÓN (Buy Me a Coffee) ===
-function renderBuyMeCoffee() {
-    const coffeeBtn = document.createElement('a');
-    coffeeBtn.href = "#"; // Reemplazar con tu enlace real, e.g., "https://www.buymeacoffee.com/tuusuario"
-    coffeeBtn.target = "_blank";
-    coffeeBtn.className = "coffee-button";
-    coffeeBtn.innerHTML = "☕ Invítame un Café";
-    coffeeBtn.onclick = (e) => {
-        e.preventDefault();
-        showCustomAlert("¡Gracias por el apoyo, Warrior! <br/><br/>(Aquí iría tu enlace real a Buy Me a Coffee o PayPal).", "Soporte Barrio");
-    };
-    document.body.appendChild(coffeeBtn);
-}
-
-// === 7. INICIALIZACIÓN ===
+// === 6. INICIALIZACIÓN ===
 document.addEventListener('DOMContentLoaded', () => {
     renderLevel(0); // Iniciar siempre en el nivel 0
-    renderBuyMeCoffee();
 });
