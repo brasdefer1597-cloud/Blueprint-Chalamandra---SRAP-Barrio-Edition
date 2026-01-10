@@ -1,181 +1,397 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blueprint Chalamandra - SRAP Barrio Edition</title>
     <!-- Carga de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Carga de fuentes para el estilo "Graffiti/Neon" -->
-    <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Inter:wght@400;700;900;1000&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/styles.css">
-</head>
-<body class="p-4 min-h-screen flex flex-col justify-between">
-
+    <link
+      href="https://fonts.googleapis.com/css2?family=Monoton&family=Inter:wght@400;700;900;1000&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body class="p-4 min-h-screen flex flex-col justify-between">
     <!-- BARRA DE NAVEGACIÓN Y CONTADOR GLOBAL -->
-    <header class="fixed top-0 left-0 right-0 p-4 bg-gray-900/90 shadow-2xl z-20 flex items-center justify-between">
+    <header
+      class="fixed top-0 left-0 right-0 p-4 bg-gray-900/90 shadow-2xl z-20 flex items-center justify-between"
+    >
+      <div id="nav-container" class="flex space-x-2">
+        <button
+          id="nav-btn-0"
+          onclick="renderLevel(0)"
+          class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12"
+        >
+          HOME
+        </button>
+        <button
+          id="nav-btn-2"
+          onclick="renderLevel(2)"
+          class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12 nav-locked"
+        >
+          N. 2
+        </button>
+        <button
+          id="nav-btn-3"
+          onclick="renderLevel(3)"
+          class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12 nav-locked"
+        >
+          N. 3
+        </button>
+        <button
+          id="nav-btn-5"
+          onclick="renderLevel(5)"
+          class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12 nav-locked"
+        >
+          N. 5
+        </button>
+      </div>
 
-        <div id="nav-container" class="flex space-x-2">
-            <button id="nav-btn-0" onclick="renderLevel(0)" class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12">HOME</button>
-            <button id="nav-btn-2" onclick="renderLevel(2)" class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12 nav-locked">N. 2</button>
-            <button id="nav-btn-3" onclick="renderLevel(3)" class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12 nav-locked">N. 3</button>
-            <button id="nav-btn-5" onclick="renderLevel(5)" class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12 nav-locked">N. 5</button>
-        </div>
-
-        <!-- Contador de Gamificación (Global) -->
-        <div class="bg-gray-800 p-2 rounded-xl shadow-lg border border-lime-500/50">
-            <p class="text-xs font-bold text-lime-400 uppercase">Insight 🎯</p>
-            <p id="insight-counter" class="text-xl font-black text-white">0</p>
-        </div>
+      <!-- Contador de Gamificación (Global) -->
+      <div
+        class="bg-gray-800 p-2 rounded-xl shadow-lg border border-lime-500/50"
+      >
+        <p class="text-xs font-bold text-lime-400 uppercase">Insight 🎯</p>
+        <p id="insight-counter" class="text-xl font-black text-white">0</p>
+      </div>
     </header>
 
     <!-- Contenido Principal: Control de Vistas -->
-    <main class="text-white text-center flex-grow flex flex-col items-center justify-center pt-20 pb-4">
+    <main
+      class="text-white text-center flex-grow flex flex-col items-center justify-center pt-20 pb-4"
+    >
+      <h1
+        id="main-title"
+        class="graffiti-title text-4xl sm:text-5xl mb-8 font-extrabold text-white"
+      ></h1>
 
-        <h1 id="main-title" class="graffiti-title text-4xl sm:text-5xl mb-8 font-extrabold text-white"></h1>
+      <!-- SECCIONES DE NIVELES -->
 
-        <!-- SECCIONES DE NIVELES -->
+      <!-- Nivel 0 – Hero / Welcome Boss -->
+      <section
+        id="level-0"
+        class="level-section w-full max-w-lg hidden transition-opacity duration-500"
+      >
+        <p
+          class="text-lime-400 text-lg sm:text-xl mb-6 max-w-md italic font-semibold mx-auto"
+        >
+          “Orale mi carnala, bienvenid@ al caos chido: descubre tu **CHAOS
+          Factor** y domina tu flow.”
+        </p>
 
-        <!-- Nivel 0 – Hero / Welcome Boss -->
-        <section id="level-0" class="level-section w-full max-w-lg hidden transition-opacity duration-500">
-            <p class="text-lime-400 text-lg sm:text-xl mb-6 max-w-md italic font-semibold mx-auto">
-                “Orale mi carnala, bienvenid@ al caos chido: descubre tu **CHAOS Factor** y domina tu flow.”
+        <p class="text-base text-gray-400 mb-8">
+          Chola, Malandra o Fresa… ¿quién manda hoy? <br />
+        </p>
+
+        <div class="w-full grid grid-cols-3 gap-6 mb-12">
+          <!-- Los 3 arquetipos (NPCs) -->
+          <div class="p-3 rounded-xl border-2 border-neon-pink bg-pink-900/20">
+            <p class="font-black text-xl text-neon-pink">CHOLA</p>
+          </div>
+          <div class="p-3 rounded-xl border-2 border-neon-lime bg-lime-900/20">
+            <p class="font-black text-xl text-neon-lime">MALANDRA</p>
+          </div>
+          <div class="p-3 rounded-xl border-2 border-neon-blue bg-cyan-900/20">
+            <p class="font-black text-xl text-neon-blue">FRESA</p>
+          </div>
+        </div>
+
+        <button
+          onclick="unlockAndRenderLevel(2)"
+          class="cta-button px-8 py-3 rounded-full text-base sm:text-lg tracking-wider"
+        >
+          ¡Vámonos pal Nivel 2 (SRAP)! 🚀
+        </button>
+      </section>
+
+      <!-- Nivel 2 – SRAP Barrio Edition (Premium: Tarea de Reflexión) -->
+      <section
+        id="level-2"
+        class="level-section w-full max-w-xl hidden transition-opacity duration-500 flex-col"
+      >
+        <p class="text-base text-gray-400 mb-6 font-semibold">
+          Scan → Respira → Alinea → Pausa, pero con flow cholo-fresa-malandra.
+          **La DOMINACIÓN se logra al completar la Tarea de Reflexión antes de
+          hacer click.**
+        </p>
+
+        <div id="srap-steps-container" class="space-y-4">
+          <div
+            id="srap-scan"
+            class="srap-step p-4 rounded-r-lg"
+            onclick="collectInsight(this, 'srap-scan', 1)"
+          >
+            <p class="srap-title text-xl font-bold text-neon-blue">
+              1. SCAN 🔍 (El Sensor)
             </p>
-
-            <p class="text-base text-gray-400 mb-8">
-                Chola, Malandra o Fresa… ¿quién manda hoy? <br/>
+            <p class="text-sm text-gray-300 mt-1">
+              Mira tu caos alrededor, ¿qué te está frenando? **Tarea:** Nombra 1
+              impulso sin juzgarlo.
             </p>
-
-            <div class="w-full grid grid-cols-3 gap-6 mb-12">
-                <!-- Los 3 arquetipos (NPCs) -->
-                <div class="p-3 rounded-xl border-2 border-neon-pink bg-pink-900/20"><p class="font-black text-xl text-neon-pink">CHOLA</p></div>
-                <div class="p-3 rounded-xl border-2 border-neon-lime bg-lime-900/20"><p class="font-black text-xl text-neon-lime">MALANDRA</p></div>
-                <div class="p-3 rounded-xl border-2 border-neon-blue bg-cyan-900/20"><p class="font-black text-xl text-neon-blue">FRESA</p></div>
-            </div>
-
-            <button onclick="unlockAndRenderLevel(2)" class="cta-button px-8 py-3 rounded-full text-base sm:text-lg tracking-wider">
-                ¡Vámonos pal Nivel 2 (SRAP)! 🚀
-            </button>
-        </section>
-
-
-        <!-- Nivel 2 – SRAP Barrio Edition (Premium: Tarea de Reflexión) -->
-        <section id="level-2" class="level-section w-full max-w-xl hidden transition-opacity duration-500 flex-col">
-            <p class="text-base text-gray-400 mb-6 font-semibold">
-                Scan → Respira → Alinea → Pausa, pero con flow cholo-fresa-malandra. **La DOMINACIÓN se logra al completar la Tarea de Reflexión antes de hacer click.**
+          </div>
+          <div
+            id="srap-respira"
+            class="srap-step p-4 rounded-r-lg"
+            onclick="collectInsight(this, 'srap-respira', 1)"
+          >
+            <p class="srap-title text-xl font-bold text-neon-blue">
+              2. RESPIRA 🧘‍♀️ (El Ancla)
             </p>
-
-            <div id="srap-steps-container" class="space-y-4">
-                <div id="srap-scan" class="srap-step p-4 rounded-r-lg" onclick="collectInsight(this, 'srap-scan', 1)">
-                    <p class="srap-title text-xl font-bold text-neon-blue">1. SCAN 🔍 (El Sensor)</p>
-                    <p class="text-sm text-gray-300 mt-1">Mira tu caos alrededor, ¿qué te está frenando? **Tarea:** Nombra 1 impulso sin juzgarlo.</p>
-                </div>
-                <div id="srap-respira" class="srap-step p-4 rounded-r-lg" onclick="collectInsight(this, 'srap-respira', 1)">
-                    <p class="srap-title text-xl font-bold text-neon-blue">2. RESPIRA 🧘‍♀️ (El Ancla)</p>
-                    <p class="text-sm text-gray-300 mt-1">Toma 3 segundos para tu flow interno. **Tarea:** Identifica el sentimiento raíz (no la reacción).</p>
-                </div>
-                <div id="srap-alinea" class="srap-step p-4 rounded-r-lg" onclick="collectInsight(this, 'srap-alinea', 2)">
-                    <p class="srap-title text-xl font-bold text-neon-blue">3. ALINEA 🎯 (El GPS)</p>
-                    <p class="text-sm text-gray-300 mt-1">Conecta emoción + razón → tu ritmo real. **Tarea Premium:** Escribe 1 frase de intención poderosa (+2 Insights).</p>
-                </div>
-                <div id="srap-pausa" class="srap-step p-4 rounded-r-lg" onclick="collectInsight(this, 'srap-pausa', 1)">
-                    <p class="srap-title text-xl font-bold text-neon-blue">4. PAUSA 🛑 (La Estrategia)</p>
-                    <p class="text-sm text-gray-300 mt-1">Observa y actúa con estrategia warrior. **Tarea:** Define el primer paso concreto.</p>
-                </div>
-            </div>
-
-            <button onclick="unlockAndRenderLevel(3)" class="cta-button mt-10 px-8 py-3 rounded-full text-base sm:text-lg tracking-wider">
-                ¡Nivel 3: Caos Controlado! 🌪
-            </button>
-        </section>
-
-
-        <!-- Nivel 3 – Caos Controlado (Premium: Generación de Ideas) -->
-        <section id="level-3" class="level-section w-full max-w-xl hidden transition-opacity duration-500 flex-col">
-            <p class="text-base text-gray-400 mb-6 font-semibold">
-                Es hora del desmadre calculado, warrior: usa tu caos como arma secreta. **El Dominio requiere que ejecutes el Ritual en un problema real y registres tu intento con el click.**
+            <p class="text-sm text-gray-300 mt-1">
+              Toma 3 segundos para tu flow interno. **Tarea:** Identifica el
+              sentimiento raíz (no la reacción).
             </p>
-
-            <div id="chaos-rituals-container" class="space-y-4 text-left">
-                <div class="chaos-ritual p-4 rounded-xl" onclick="startChaosRitual('error')">
-                    <p class="chaos-title text-xl font-bold">1. Error Creativo 💥 (El Prototipo Rápido - RIESGO ALTO)</p>
-                    <p class="text-xs text-gray-300 mt-1">Prueba un error creativo y aprende algo raro pero útil. **+1 Desastre, posible SUPER INSIGHT o Penalización.**</p>
-                </div>
-                <div class="chaos-ritual p-4 rounded-xl" onclick="startChaosRitual('fiesta')">
-                    <p class="chaos-title text-xl font-bold">2. Fiesta Estratégica 🌮 (Lluvia de Ideas sin Filtro - SEGURO)</p>
-                    <p class="text-xs text-gray-300 mt-1">Genera ideas sin filtro (Graffiti o Salsa mental). **+2 Desastre, +2 Insights garantizados.**</p>
-                </div>
-            </div>
-
-            <div class="mt-8 bg-gray-900/80 p-4 rounded-xl border border-lime-500/50">
-                <p class="text-sm text-lime-400 uppercase font-bold">Métrica de Desmadre:</p>
-                <p id="chaos-metric-display" class="font-bold text-white text-lg mt-1">--</p>
-            </div>
-
-             <button onclick="unlockAndRenderLevel(5)" class="cta-button mt-10 px-8 py-3 rounded-full text-base sm:text-lg tracking-wider">
-                ¡Nivel 5: Mandala Multiconsciente! 🎩
-            </button>
-        </section>
-
-
-        <!-- Nivel 5 – Sombreros / Mandala Multiconsciente (Premium: Insights Ocultos) -->
-        <section id="level-5" class="level-section w-full max-w-2xl hidden transition-opacity duration-500 flex-col">
-            <p class="text-base text-gray-400 mb-8 font-semibold max-w-md mx-auto">
-                Pon tu flow en orden: Creativo, Crítico, Táctico, y un poquito de fresa. (¡Busca la Sinergia!) **El Insight se gana al ejecutar la Tarea que revela cada Perspectiva/Rol.**
+          </div>
+          <div
+            id="srap-alinea"
+            class="srap-step p-4 rounded-r-lg"
+            onclick="collectInsight(this, 'srap-alinea', 2)"
+          >
+            <p class="srap-title text-xl font-bold text-neon-blue">
+              3. ALINEA 🎯 (El GPS)
             </p>
+            <p class="text-sm text-gray-300 mt-1">
+              Conecta emoción + razón → tu ritmo real. **Tarea Premium:**
+              Escribe 1 frase de intención poderosa (+2 Insights).
+            </p>
+          </div>
+          <div
+            id="srap-pausa"
+            class="srap-step p-4 rounded-r-lg"
+            onclick="collectInsight(this, 'srap-pausa', 1)"
+          >
+            <p class="srap-title text-xl font-bold text-neon-blue">
+              4. PAUSA 🛑 (La Estrategia)
+            </p>
+            <p class="text-sm text-gray-300 mt-1">
+              Observa y actúa con estrategia warrior. **Tarea:** Define el
+              primer paso concreto.
+            </p>
+          </div>
+        </div>
 
-            <!-- Grid de Sombreros -->
-            <div class="grid grid-cols-2 gap-4 text-left">
+        <button
+          onclick="unlockAndRenderLevel(3)"
+          class="cta-button mt-10 px-8 py-3 rounded-full text-base sm:text-lg tracking-wider"
+        >
+          ¡Nivel 3: Caos Controlado! 🌪
+        </button>
+      </section>
 
-                <div id="hat-creativo" class="mandala-hat p-4 rounded-xl" onclick="revealHatInsight(this, 'creativo', '¡Boom! Hoy se vale todo. Mezcla ballet con reggaetón mental.')">
-                    <div class="hat-icon">🎨</div>
-                    <p class="text-lg font-bold text-purple-300">CREATIVO (+3 Insights)</p>
-                    <div class="hat-insight text-sm text-white"><p>Tu tarea: Genera 3 soluciones absurdas al problema que tengas. El caos premia la imaginación.</p></div>
-                </div>
+      <!-- Nivel 3 – Caos Controlado (Premium: Generación de Ideas) -->
+      <section
+        id="level-3"
+        class="level-section w-full max-w-xl hidden transition-opacity duration-500 flex-col"
+      >
+        <p class="text-base text-gray-400 mb-6 font-semibold">
+          Es hora del desmadre calculado, warrior: usa tu caos como arma
+          secreta. **El Dominio requiere que ejecutes el Ritual en un problema
+          real y registres tu intento con el click.**
+        </p>
 
-                <div id="hat-critico" class="mandala-hat p-4 rounded-xl" onclick="revealHatInsight(this, 'critico', 'Ojo de águila, carnala. ¿Ese patrón te sirve o te estorba?')">
-                    <div class="hat-icon">🧐</div>
-                    <p class="text-lg font-bold text-purple-300">CRÍTICO (+3 Insights)</p>
-                    <div class="hat-insight text-sm text-white"><p>Tu tarea: Identifica el mayor riesgo de tus 3 soluciones. No es pesimismo, es estrategia pura.</p></div>
-                </div>
+        <div id="chaos-rituals-container" class="space-y-4 text-left">
+          <div
+            class="chaos-ritual p-4 rounded-xl"
+            onclick="startChaosRitual('error')"
+          >
+            <p class="chaos-title text-xl font-bold">
+              1. Error Creativo 💥 (El Prototipo Rápido - RIESGO ALTO)
+            </p>
+            <p class="text-xs text-gray-300 mt-1">
+              Prueba un error creativo y aprende algo raro pero útil. **+1
+              Desastre, posible SUPER INSIGHT o Penalización.**
+            </p>
+          </div>
+          <div
+            class="chaos-ritual p-4 rounded-xl"
+            onclick="startChaosRitual('fiesta')"
+          >
+            <p class="chaos-title text-xl font-bold">
+              2. Fiesta Estratégica 🌮 (Lluvia de Ideas sin Filtro - SEGURO)
+            </p>
+            <p class="text-xs text-gray-300 mt-1">
+              Genera ideas sin filtro (Graffiti o Salsa mental). **+2 Desastre,
+              +2 Insights garantizados.**
+            </p>
+          </div>
+        </div>
 
-                <div id="hat-tactico" class="mandala-hat p-4 rounded-xl" onclick="revealHatInsight(this, 'tactico', 'Desmadre con objetivo. Mueve esa ficha y gana la partida.')">
-                    <div class="hat-icon">♟️</div>
-                    <p class="text-lg font-bold text-purple-300">TÁCTICO (+3 Insights)</p>
-                    <div class="hat-insight text-sm text-white"><p>Tu tarea: Combina la mejor solución con el menor riesgo. Acción simple y directa.</p></div>
-                </div>
+        <div
+          class="mt-8 bg-gray-900/80 p-4 rounded-xl border border-lime-500/50"
+        >
+          <p class="text-sm text-lime-400 uppercase font-bold">
+            Métrica de Desmadre:
+          </p>
+          <p
+            id="chaos-metric-display"
+            class="font-bold text-white text-lg mt-1"
+          >
+            --
+          </p>
+        </div>
 
-                <div id="hat-fresa" class="mandala-hat p-4 rounded-xl" onclick="revealHatInsight(this, 'fresa', 'Hazlo bien o no lo hagas. Flow VIP en zona de guerra.')">
-                    <div class="hat-icon">🍓</div>
-                    <p class="text-lg font-bold text-purple-300">FRESA (+3 Insights)</p>
-                    <div class="hat-insight text-sm text-white"><p>Tu tarea: Define tu estándar de excelencia (el "flow VIP"). ¿Qué te hace sentir imparable?</p></div>
-                </div>
+        <button
+          onclick="unlockAndRenderLevel(5)"
+          class="cta-button mt-10 px-8 py-3 rounded-full text-base sm:text-lg tracking-wider"
+        >
+          ¡Nivel 5: Mandala Multiconsciente! 🎩
+        </button>
+      </section>
+
+      <!-- Nivel 5 – Sombreros / Mandala Multiconsciente (Premium: Insights Ocultos) -->
+      <section
+        id="level-5"
+        class="level-section w-full max-w-2xl hidden transition-opacity duration-500 flex-col"
+      >
+        <p class="text-base text-gray-400 mb-8 font-semibold max-w-md mx-auto">
+          Pon tu flow en orden: Creativo, Crítico, Táctico, y un poquito de
+          fresa. (¡Busca la Sinergia!) **El Insight se gana al ejecutar la Tarea
+          que revela cada Perspectiva/Rol.**
+        </p>
+
+        <!-- Grid de Sombreros -->
+        <div class="grid grid-cols-2 gap-4 text-left">
+          <div
+            id="hat-creativo"
+            class="mandala-hat p-4 rounded-xl"
+            onclick="
+              revealHatInsight(
+                this,
+                'creativo',
+                '¡Boom! Hoy se vale todo. Mezcla ballet con reggaetón mental.',
+              )
+            "
+          >
+            <div class="hat-icon">🎨</div>
+            <p class="text-lg font-bold text-purple-300">
+              CREATIVO (+3 Insights)
+            </p>
+            <div class="hat-insight text-sm text-white">
+              <p>
+                Tu tarea: Genera 3 soluciones absurdas al problema que tengas.
+                El caos premia la imaginación.
+              </p>
             </div>
+          </div>
 
-            <button onclick="showCustomAlert('¡Felicidades Warrior! Has completado la demo PREMIUM del Blueprint Chalamandra. ¡Nos vemos en el Caos!')" class="cta-button mt-10 px-8 py-3 rounded-full text-base sm:text-lg tracking-wider">
-                ¡Finalizar Demo! 🏆
-            </button>
-        </section>
+          <div
+            id="hat-critico"
+            class="mandala-hat p-4 rounded-xl"
+            onclick="
+              revealHatInsight(
+                this,
+                'critico',
+                'Ojo de águila, carnala. ¿Ese patrón te sirve o te estorba?',
+              )
+            "
+          >
+            <div class="hat-icon">🧐</div>
+            <p class="text-lg font-bold text-purple-300">
+              CRÍTICO (+3 Insights)
+            </p>
+            <div class="hat-insight text-sm text-white">
+              <p>
+                Tu tarea: Identifica el mayor riesgo de tus 3 soluciones. No es
+                pesimismo, es estrategia pura.
+              </p>
+            </div>
+          </div>
 
+          <div
+            id="hat-tactico"
+            class="mandala-hat p-4 rounded-xl"
+            onclick="
+              revealHatInsight(
+                this,
+                'tactico',
+                'Desmadre con objetivo. Mueve esa ficha y gana la partida.',
+              )
+            "
+          >
+            <div class="hat-icon">♟️</div>
+            <p class="text-lg font-bold text-purple-300">
+              TÁCTICO (+3 Insights)
+            </p>
+            <div class="hat-insight text-sm text-white">
+              <p>
+                Tu tarea: Combina la mejor solución con el menor riesgo. Acción
+                simple y directa.
+              </p>
+            </div>
+          </div>
+
+          <div
+            id="hat-fresa"
+            class="mandala-hat p-4 rounded-xl"
+            onclick="
+              revealHatInsight(
+                this,
+                'fresa',
+                'Hazlo bien o no lo hagas. Flow VIP en zona de guerra.',
+              )
+            "
+          >
+            <div class="hat-icon">🍓</div>
+            <p class="text-lg font-bold text-purple-300">FRESA (+3 Insights)</p>
+            <div class="hat-insight text-sm text-white">
+              <p>
+                Tu tarea: Define tu estándar de excelencia (el "flow VIP"). ¿Qué
+                te hace sentir imparable?
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <button
+          onclick="
+            showCustomAlert(
+              '¡Felicidades Warrior! Has completado la demo PREMIUM del Blueprint Chalamandra. ¡Nos vemos en el Caos!',
+            )
+          "
+          class="cta-button mt-10 px-8 py-3 rounded-full text-base sm:text-lg tracking-wider"
+        >
+          ¡Finalizar Demo! 🏆
+        </button>
+      </section>
     </main>
 
     <!-- MODAL DE ALERTA PERSONALIZADO (Reemplazo de alert()) -->
-    <div id="custom-modal" class="fixed inset-0 hidden items-center justify-center p-4">
-        <div id="modal-content" class="max-w-md w-full p-6 rounded-2xl text-center">
-            <h3 id="modal-title" class="text-2xl font-black text-lime-400 mb-3">¡Insight Revelado!</h3>
-            <p id="modal-message" class="text-white mb-6 text-base"></p>
-            <button onclick="hideCustomAlert()" class="cta-button px-6 py-2 rounded-full text-sm">
-                Entendido, Carnal
-            </button>
-        </div>
+    <div
+      id="custom-modal"
+      class="fixed inset-0 hidden items-center justify-center p-4"
+    >
+      <div
+        id="modal-content"
+        class="max-w-md w-full p-6 rounded-2xl text-center"
+      >
+        <h3 id="modal-title" class="text-2xl font-black text-lime-400 mb-3">
+          ¡Insight Revelado!
+        </h3>
+        <p id="modal-message" class="text-white mb-6 text-base"></p>
+        <button
+          onclick="hideCustomAlert()"
+          class="cta-button px-6 py-2 rounded-full text-sm"
+        >
+          Entendido, Carnal
+        </button>
+      </div>
     </div>
 
     <!-- Footer -->
     <footer class="text-center text-gray-600 text-xs mt-4">
-        <p class="salamandra">🐉</p>
-        <p>*Salamandras bailando ballet folklórico con flow.</p>
+      <p class="salamandra">🐉</p>
+      <p>*Salamandras bailando ballet folklórico con flow.</p>
     </footer>
 
     <script src="../assets/js/script.js"></script>
-</body>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.initGame) {
+          window.initGame("demo");
+        }
+      });
+    </script>
+  </body>
 </html>
