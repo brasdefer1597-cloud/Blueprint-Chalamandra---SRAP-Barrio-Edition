@@ -1,0 +1,25 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "Este es un proyecto web ligero y gamificado para el desarrollo personal, enfocado en manejar el caos y encontrar el flow.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brasdefer1597-cloud/Blueprint-Chalamandra---SRAP-Barrio-Edition.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/brasdefer1597-cloud/Blueprint-Chalamandra---SRAP-Barrio-Edition/issues"
+  },
+  "homepage": "https://github.com/brasdefer1597-cloud/Blueprint-Chalamandra---SRAP-Barrio-Edition#readme",
+  "devDependencies": {
+    "prettier": "^3.7.4",
+    "serve": "^14.2.5"
+  }
+}

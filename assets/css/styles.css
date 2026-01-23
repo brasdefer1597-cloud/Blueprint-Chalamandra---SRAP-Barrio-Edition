@@ -1,99 +1,146 @@
 /* Variables y Estilos Generales "Barrio Warrior" */
 :root {
-    --neon-pink: #ff007f;
-    --neon-blue: #00ffff;
-    --neon-lime: #ccff00;
-    --neon-red: #ff3131;
-    --neon-purple: #bf00ff;
+  --neon-pink: #ff007f;
+  --neon-blue: #00ffff;
+  --neon-lime: #ccff00;
+  --neon-red: #ff3131;
+  --neon-purple: #bf00ff;
 }
 body {
-    font-family: 'Inter', sans-serif;
-    background-color: #0d0d0d; /* Fondo oscuro casi negro */
+  font-family: "Inter", sans-serif;
+  background-color: #0d0d0d; /* Fondo oscuro casi negro */
 }
 .graffiti-title {
-    font-family: 'Monoton', cursive;
-    text-shadow:
-        0 0 5px var(--neon-pink),
-        0 0 15px var(--neon-pink),
-        0 0 30px var(--neon-pink);
-    color: #fff;
-    line-height: 1.1;
+  font-family: "Monoton", cursive;
+  text-shadow:
+    0 0 5px var(--neon-pink),
+    0 0 15px var(--neon-pink),
+    0 0 30px var(--neon-pink);
+  color: #fff;
+  line-height: 1.1;
 }
 .cta-button {
-    background-color: var(--neon-lime);
-    color: #1a1a1a;
-    font-weight: 900;
-    text-transform: uppercase;
-    box-shadow: 0 0 10px var(--neon-lime);
-    transition: all 0.2s ease;
+  background-color: var(--neon-lime);
+  color: #1a1a1a;
+  font-weight: 900;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px var(--neon-lime);
+  transition: all 0.2s ease;
 }
 .cta-button:hover {
-    background-color: #e0ff40;
-    box-shadow: 0 0 20px var(--neon-lime);
-    transform: scale(1.05);
+  background-color: #e0ff40;
+  box-shadow: 0 0 20px var(--neon-lime);
+  transform: scale(1.05);
 }
 
 /* Nav y Botones de Nivel */
 .nav-level-button {
-    transition: all 0.2s ease;
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
 }
 .nav-level-button:hover:not(.nav-active) {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 .nav-active {
-    background-color: var(--neon-pink);
-    color: #1a1a1a;
-    box-shadow: 0 0 15px var(--neon-pink);
-    font-weight: 900;
+  background-color: var(--neon-pink);
+  color: #1a1a1a;
+  box-shadow: 0 0 15px var(--neon-pink);
+  font-weight: 900;
 }
 .nav-locked {
-    opacity: 0.3;
-    cursor: not-allowed;
-    background-color: #333;
+  opacity: 0.3;
+  cursor: not-allowed;
+  background-color: #333;
 }
 
 /* Estilos específicos de Nivel 2, 3 y 5 (manteniendo el flow) */
-.srap-step, .chaos-ritual, .mandala-hat {
-    transition: all 0.3s ease;
-    cursor: pointer;
+.srap-step,
+.chaos-ritual,
+.mandala-hat {
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
-.srap-step { border-left: 4px solid var(--neon-blue); background: rgba(0, 255, 255, 0.05); }
-.srap-step:hover { transform: translateX(5px) scale(1.02); box-shadow: 0 0 15px var(--neon-blue); }
-.srap-active { border-left: 4px solid var(--neon-lime); background: rgba(204, 255, 0, 0.1); }
+.srap-step {
+  border-left: 4px solid var(--neon-blue);
+  background: rgba(0, 255, 255, 0.05);
+}
+.srap-step:hover {
+  transform: translateX(5px) scale(1.02);
+  box-shadow: 0 0 15px var(--neon-blue);
+}
+.srap-active {
+  border-left: 4px solid var(--neon-lime);
+  background: rgba(204, 255, 0, 0.1);
+}
 
-.chaos-ritual { border: 2px solid var(--neon-red); background: rgba(255, 49, 49, 0.1); }
-.chaos-ritual:hover { box-shadow: 0 0 15px var(--neon-red); transform: scale(1.02); }
+.chaos-ritual {
+  border: 2px solid var(--neon-red);
+  background: rgba(255, 49, 49, 0.1);
+}
+.chaos-ritual:hover {
+  box-shadow: 0 0 15px var(--neon-red);
+  transform: scale(1.02);
+}
 
-.mandala-hat { border: 2px solid var(--neon-purple); background: rgba(191, 0, 255, 0.1); }
-.mandala-hat:hover { box-shadow: 0 0 20px var(--neon-purple); transform: translateY(-5px); background: rgba(191, 0, 255, 0.2); }
-.hat-insight { max-height: 0; overflow: hidden; transition: max-height 0.5s ease, opacity 0.5s ease; opacity: 0; }
-.hat-revealed .hat-insight { max-height: 150px; opacity: 1; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.3); }
+.mandala-hat {
+  border: 2px solid var(--neon-purple);
+  background: rgba(191, 0, 255, 0.1);
+}
+.mandala-hat:hover {
+  box-shadow: 0 0 20px var(--neon-purple);
+  transform: translateY(-5px);
+  background: rgba(191, 0, 255, 0.2);
+}
+.hat-insight {
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.5s ease,
+    opacity 0.5s ease;
+  opacity: 0;
+}
+.hat-revealed .hat-insight {
+  max-height: 150px;
+  opacity: 1;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.3);
+}
 
 /* Icono de Salamandra */
 .salamandra {
-    display: inline-block;
-    transform: rotate(-10deg);
-    animation: dance 2s infinite alternate;
+  display: inline-block;
+  transform: rotate(-10deg);
+  animation: dance 2s infinite alternate;
 }
 @keyframes dance {
-    from { transform: rotate(-10deg) scale(1); }
-    to { transform: rotate(10deg) scale(1.05); }
+  from {
+    transform: rotate(-10deg) scale(1);
+  }
+  to {
+    transform: rotate(10deg) scale(1.05);
+  }
 }
 
 /* Estilos del Modal Personalizado (Reemplazo de alert()) */
 #custom-modal {
-    background-color: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
-    z-index: 50;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  z-index: 50;
 }
 #modal-content {
-    background-color: #1a1a1a;
-    border: 2px solid var(--neon-lime);
-    box-shadow: 0 0 30px var(--neon-lime);
-    animation: fadeIn 0.3s ease-out;
+  background-color: #1a1a1a;
+  border: 2px solid var(--neon-lime);
+  box-shadow: 0 0 30px var(--neon-lime);
+  animation: fadeIn 0.3s ease-out;
 }
 @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
