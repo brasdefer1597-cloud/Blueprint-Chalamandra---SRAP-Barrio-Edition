@@ -17,6 +17,15 @@ const mainTitle = document.getElementById("main-title");
 const insightCounter = document.getElementById("insight-counter");
 const chaosMetricDisplay = document.getElementById("chaos-metric-display");
 
+// Optimization: Cache frequently accessed DOM elements to prevent layout thrashing
+const srapSteps = document.querySelectorAll(".srap-step");
+const mandalaHats = document.querySelectorAll(".mandala-hat");
+const navButtons = {};
+[0, 2, 3, 5].forEach((level) => {
+  const btn = document.getElementById(`nav-btn-${level}`);
+  if (btn) navButtons[level] = btn;
+});
+
 const levelTitles = {
   0: "Blueprint Chalamandra™",
   2: "🌀 SRAP Flow Premium",
@@ -76,7 +85,7 @@ function updateUI() {
   chaosMetricDisplay.innerHTML = `Desastre Épico: <span class="text-red-400">${gameState.epicDisasterLevel}</span> | Flow Control (Ratio Insight/Actividad): <span class="${flowControl > 1.5 ? "text-lime-400" : "text-yellow-400"}">${flowControl}</span>`;
 
   // Refrescar estado de los pasos SRAP
-  document.querySelectorAll(".srap-step").forEach((step) => {
+  srapSteps.forEach((step) => {
     const stepId = step.id;
     if (gameState.collectedSteps[stepId]) {
       step.classList.add("srap-active");
@@ -88,7 +97,7 @@ function updateUI() {
   });
 
   // Refrescar estado de los sombreros
-  document.querySelectorAll(".mandala-hat").forEach((hat) => {
+  mandalaHats.forEach((hat) => {
     const hatType = hat.id.replace("hat-", "");
     if (gameState.collectedHats[hatType]) {
       // Si ya está activo, permitimos que el usuario lo active/desactive visualmente
@@ -100,7 +109,7 @@ function updateUI() {
 
   // Actualizar barra de navegación
   Object.keys(gameState.unlockedLevels).forEach((level) => {
-    const btn = document.getElementById(`nav-btn-${level}`);
+    const btn = navButtons[level];
     const isLocked = !gameState.unlockedLevels[level];
     if (btn) {
       btn.classList.toggle("nav-locked", isLocked);
