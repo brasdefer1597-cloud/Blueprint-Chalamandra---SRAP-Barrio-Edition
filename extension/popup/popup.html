@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chalamandra Popup</title>
+    <link rel="stylesheet" href="../assets/css/tailwind.min.css" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <style>
+      body {
+        width: 400px;
+        height: 600px;
+        overflow-y: auto;
+        margin: 0;
+      }
+      header {
+        position: sticky;
+      }
+    </style>
+  </head>
+  <body class="p-4 bg-gray-900 text-white">
+    <header class="flex items-center justify-between mb-4 bg-gray-900/90 py-2">
+      <div id="nav-container" class="flex space-x-1">
+        <button id="nav-btn-0" data-level="0" class="nav-btn nav-level-button bg-gray-700 text-white p-2 rounded text-xs font-bold">H</button>
+        <button id="nav-btn-2" data-level="2" class="nav-btn nav-level-button bg-gray-700 text-white p-2 rounded text-xs font-bold nav-locked">2</button>
+        <button id="nav-btn-3" data-level="3" class="nav-btn nav-level-button bg-gray-700 text-white p-2 rounded text-xs font-bold nav-locked">3</button>
+        <button id="nav-btn-5" data-level="5" class="nav-btn nav-level-button bg-gray-700 text-white p-2 rounded text-xs font-bold nav-locked">5</button>
+      </div>
+      <div class="bg-gray-800 p-2 rounded border border-lime-500/50">
+        <p class="text-xs font-bold text-lime-400 uppercase leading-none">Insight</p>
+        <p id="insight-counter" class="text-lg font-black text-white leading-none">0</p>
+      </div>
+    </header>
+
+    <main class="text-center">
+      <h1 id="main-title" class="graffiti-title text-2xl mb-4 font-extrabold"></h1>
+
+      <!-- Level 0 -->
+      <section id="level-0" class="level-section hidden">
+        <p class="text-lime-400 text-sm mb-4 italic font-semibold">“Descubre tu CHAOS Factor y domina tu flow.”</p>
+        <div class="grid grid-cols-3 gap-2 mb-6">
+          <div class="p-2 rounded border border-neon-pink text-xs font-bold">CHOLA</div>
+          <div class="p-2 rounded border border-neon-lime text-xs font-bold">MALANDRA</div>
+          <div class="p-2 rounded border border-neon-blue text-xs font-bold">FRESA</div>
+        </div>
+        <button id="btn-unlock-2" class="cta-button px-6 py-2 rounded-full text-sm">Vámonos 🚀</button>
+      </section>
+
+      <!-- Level 2 -->
+      <section id="level-2" class="level-section hidden flex-col">
+        <p class="text-xs text-gray-400 mb-4">Scan → Respira → Alinea → Pausa</p>
+        <div class="space-y-2 text-left">
+          <div id="srap-scan" class="srap-step srap-btn p-2 rounded" data-id="srap-scan" data-points="1">
+            <p class="font-bold text-neon-blue text-sm">1. SCAN 🔍</p>
+            <p class="text-[10px] text-gray-300">Nombra 1 impulso sin juzgarlo.</p>
+          </div>
+          <div id="srap-respira" class="srap-step srap-btn p-2 rounded" data-id="srap-respira" data-points="1">
+            <p class="font-bold text-neon-blue text-sm">2. RESPIRA 🧘‍♀️</p>
+            <p class="text-[10px] text-gray-300">Identifica el sentimiento raíz.</p>
+          </div>
+          <div id="srap-alinea" class="srap-step srap-btn p-2 rounded" data-id="srap-alinea" data-points="2">
+            <p class="font-bold text-neon-blue text-sm">3. ALINEA 🎯</p>
+            <p class="text-[10px] text-gray-300">Escribe 1 frase de intención poderosa.</p>
+          </div>
+          <div id="srap-pausa" class="srap-step srap-btn p-2 rounded" data-id="srap-pausa" data-points="1">
+            <p class="font-bold text-neon-blue text-sm">4. PAUSA 🛑</p>
+            <p class="text-[10px] text-gray-300">Define el primer paso concreto.</p>
+          </div>
+        </div>
+        <button id="btn-unlock-3" class="cta-button mt-4 px-6 py-2 rounded-full text-sm">Nivel 3 🌪</button>
+      </section>
+
+      <!-- Level 3 -->
+      <section id="level-3" class="level-section hidden flex-col">
+        <div class="space-y-2 text-left">
+          <div class="chaos-ritual chaos-btn p-2 rounded" data-ritual="error">
+            <p class="font-bold text-xs">1. Error Creativo 💥</p>
+            <p class="text-[10px] text-gray-300">Prueba un error y aprende algo raro.</p>
+          </div>
+          <div class="chaos-ritual chaos-btn p-2 rounded" data-ritual="fiesta">
+            <p class="font-bold text-xs">2. Fiesta Estratégica 🌮</p>
+            <p class="text-[10px] text-gray-300">Genera ideas sin filtro.</p>
+          </div>
+        </div>
+        <div class="mt-4 bg-gray-800 p-2 rounded border border-lime-500/50">
+          <p id="chaos-metric-display" class="font-bold text-white text-[10px]">--</p>
+        </div>
+        <button id="btn-unlock-5" class="cta-button mt-4 px-6 py-2 rounded-full text-sm">Nivel 5 🎩</button>
+      </section>
+
+      <!-- Level 5 -->
+      <section id="level-5" class="level-section hidden flex-col">
+        <div class="grid grid-cols-2 gap-2 text-left">
+          <div id="hat-creativo" class="mandala-hat hat-btn p-2 rounded" data-hat="creativo">
+            <p class="text-[10px] font-bold text-purple-300">CREATIVO</p>
+            <div class="hat-insight text-[8px] text-white">Genera 3 soluciones absurdas.</div>
+          </div>
+          <div id="hat-critico" class="mandala-hat hat-btn p-2 rounded" data-hat="critico">
+            <p class="text-[10px] font-bold text-purple-300">CRÍTICO</p>
+            <div class="hat-insight text-[8px] text-white">Identifica el mayor riesgo.</div>
+          </div>
+          <div id="hat-tactico" class="mandala-hat hat-btn p-2 rounded" data-hat="tactico">
+            <p class="text-[10px] font-bold text-purple-300">TÁCTICO</p>
+            <div class="hat-insight text-[8px] text-white">Combina solución y riesgo.</div>
+          </div>
+          <div id="hat-fresa" class="mandala-hat hat-btn p-2 rounded" data-hat="fresa">
+            <p class="text-[10px] font-bold text-purple-300">FRESA</p>
+            <div class="hat-insight text-[8px] text-white">Define tu estándar VIP.</div>
+          </div>
+        </div>
+        <button id="btn-finish" class="cta-button mt-4 px-6 py-2 rounded-full text-sm">Finalizar! 🏆</button>
+      </section>
+    </main>
+
+    <!-- Modal -->
+    <div id="custom-modal" class="fixed inset-0 hidden items-center justify-center p-2 bg-black/80">
+      <div id="modal-content" class="p-4 rounded-xl text-center border border-lime-500 bg-gray-900 w-full">
+        <h3 id="modal-title" class="text-lg font-black text-lime-400 mb-2"></h3>
+        <p id="modal-message" class="text-white mb-4 text-xs"></p>
+        <button id="modal-ok" class="cta-button px-4 py-1 rounded-full text-xs">OK</button>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
