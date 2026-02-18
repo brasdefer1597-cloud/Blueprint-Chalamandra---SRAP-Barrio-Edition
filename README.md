@@ -35,6 +35,7 @@ El proyecto ha sido reorganizado para mayor claridad y mantenibilidad:
 ## Desarrollo
 
 Para editar el código:
+
 1.  Modifica `assets/css/styles.css` para cambios visuales.
 2.  Modifica `assets/js/script.js` para cambios en la lógica.
 3.  Los archivos HTML en `demo/` y `full/` consumen estos recursos compartidos inicializando el juego con `initGame('demo')` o `initGame('full')`.
