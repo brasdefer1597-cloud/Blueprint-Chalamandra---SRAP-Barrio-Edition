@@ -302,7 +302,29 @@ function revealHatInsight(element, hatType, insightText) {
   updateUI();
 }
 
-// === 6. INICIALIZACIÓN ===
+// === 6. ACCESIBILIDAD ===
+// Mejora la accesibilidad de elementos interactivos personalizados
+function enhanceAccessibility() {
+  const interactiveSelectors = [".srap-step", ".chaos-ritual", ".mandala-hat"];
+
+  interactiveSelectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((element) => {
+      // Add role and tabindex
+      element.setAttribute("role", "button");
+      element.setAttribute("tabindex", "0");
+
+      // Add keyboard support (Enter/Space)
+      element.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault(); // Prevent scrolling for Space
+          element.click();
+        }
+      });
+    });
+  });
+}
+
+// === 7. INICIALIZACIÓN ===
 // Expose initGame to window
 window.initGame = function (mode) {
   gameMode = mode;
@@ -312,4 +334,5 @@ window.initGame = function (mode) {
   // The original code had unlockedLevels: { 0: true, 2: false... }
   // I will keep the progression logic but remove the paywall blocks.
   renderLevel(0);
+  enhanceAccessibility();
 };
