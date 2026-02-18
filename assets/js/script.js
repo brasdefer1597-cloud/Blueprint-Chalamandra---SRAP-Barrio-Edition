@@ -314,22 +314,25 @@ function revealHatInsight(element, hatType, insightText) {
 // === 6. ACCESIBILIDAD ===
 // Mejora la accesibilidad de elementos interactivos personalizados
 function enhanceAccessibility() {
+  // Optimization: Use event delegation to reduce event listeners from N to 1 and improve memory usage.
   const interactiveSelectors = [".srap-step", ".chaos-ritual", ".mandala-hat"];
+  const selectorString = interactiveSelectors.join(", ");
 
-  interactiveSelectors.forEach((selector) => {
-    document.querySelectorAll(selector).forEach((element) => {
-      // Add role and tabindex
-      element.setAttribute("role", "button");
-      element.setAttribute("tabindex", "0");
+  // Set attributes for accessibility on all elements
+  document.querySelectorAll(selectorString).forEach((element) => {
+    element.setAttribute("role", "button");
+    element.setAttribute("tabindex", "0");
+  });
 
-      // Add keyboard support (Enter/Space)
-      element.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault(); // Prevent scrolling for Space
-          element.click();
-        }
-      });
-    });
+  // Single delegated listener for keyboard support (Enter/Space)
+  document.body.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      const target = e.target.closest(selectorString);
+      if (target) {
+        e.preventDefault(); // Prevent scrolling for Space
+        target.click();
+      }
+    }
   });
 }
 
