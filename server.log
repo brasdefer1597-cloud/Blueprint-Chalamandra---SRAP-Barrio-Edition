@@ -1,0 +1,12 @@
+127.0.0.1 - - [19/Feb/2026 14:38:37] "GET /demo/index.html HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 14:38:37] "GET /assets/js/script.js HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 14:38:37] "GET /assets/css/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 14:39:49] "GET /demo/index.html HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 14:39:49] "GET /assets/css/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 14:39:49] "GET /assets/js/script.js HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 14:40:44] "GET /demo/index.html HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 14:40:44] "GET /assets/js/script.js HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 14:40:44] "GET /assets/css/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 14:41:08] "GET /demo/index.html HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 14:41:08] "GET /assets/js/script.js HTTP/1.1" 200 -
+127.0.0.1 - - [19/Feb/2026 14:41:08] "GET /assets/css/styles.css HTTP/1.1" 200 -
