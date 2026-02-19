@@ -59,7 +59,7 @@ function showPaywallModal() {
   const message = `
     <p class="mb-4">¡Alto ahí, Warrior! Has dominado la Demo.</p>
     <p class="mb-4">Para acceder al <strong>Caos Controlado (Nivel 3)</strong> y al <strong>Mandala Multiconsciente (Nivel 5)</strong>, necesitas la versión completa.</p>
-    <a href="${kofiUrl}" target="_blank" class="cta-button px-6 py-3 rounded-full text-base font-bold inline-block mt-2 text-black hover:text-black">
+    <a href="${kofiUrl}" target="_blank" rel="noopener noreferrer" class="cta-button px-6 py-3 rounded-full text-base font-bold inline-block mt-2 text-black hover:text-black">
       🔓 Desbloquear Premium
     </a>
     <p class="text-xs text-gray-400 mt-4">Acceso inmediato tras el pago.</p>
