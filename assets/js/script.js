@@ -38,20 +38,46 @@ const customModal = document.getElementById("custom-modal");
 const modalTitle = document.getElementById("modal-title");
 const modalMessage = document.getElementById("modal-message");
 
+// Enhance Modal Accessibility Programmatically
+if (customModal) {
+  customModal.setAttribute("role", "dialog");
+  customModal.setAttribute("aria-modal", "true");
+  customModal.setAttribute("aria-labelledby", "modal-title");
+  customModal.setAttribute("aria-describedby", "modal-message");
+}
+if (modalTitle) {
+  modalTitle.setAttribute("tabindex", "-1");
+}
+
+let lastFocusedElement = null;
+
 // === 3. FUNCIONES DE UI Y ALERTA PERSONALIZADA ===
 
 // Reemplazo de alert() con un modal estilizado
 function showCustomAlert(message, title = "¡Notificación Warrior!") {
+  lastFocusedElement = document.activeElement; // Save focus
   modalTitle.textContent = title;
   modalMessage.innerHTML = message;
   customModal.classList.remove("hidden");
   customModal.classList.add("flex");
+  modalTitle.focus(); // Move focus to modal
 }
 
 function hideCustomAlert() {
   customModal.classList.add("hidden");
   customModal.classList.remove("flex");
+  if (lastFocusedElement) {
+    lastFocusedElement.focus(); // Restore focus
+    lastFocusedElement = null;
+  }
 }
+
+// Global Keydown for Accessibility (Escape to close modal)
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !customModal.classList.contains("hidden")) {
+    hideCustomAlert();
+  }
+});
 
 // Show Paywall Modal
 function showPaywallModal() {
