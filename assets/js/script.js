@@ -16,6 +16,8 @@ const levelSections = document.querySelectorAll(".level-section");
 const mainTitle = document.getElementById("main-title");
 const insightCounter = document.getElementById("insight-counter");
 const chaosMetricDisplay = document.getElementById("chaos-metric-display");
+const metricDisaster = document.getElementById("metric-disaster");
+const metricFlow = document.getElementById("metric-flow");
 
 // Optimization: Cache frequently accessed DOM elements to prevent layout thrashing
 const srapSteps = document.querySelectorAll(".srap-step");
@@ -82,7 +84,15 @@ function updateUI() {
       ? (gameState.insightPoints / totalActivity).toFixed(2)
       : 0;
 
-  chaosMetricDisplay.innerHTML = `Desastre Épico: <span class="text-red-400">${gameState.epicDisasterLevel}</span> | Flow Control (Ratio Insight/Actividad): <span class="${flowControl > 1.5 ? "text-lime-400" : "text-yellow-400"}">${flowControl}</span>`;
+  // Optimization: Update textContent instead of innerHTML to avoid parsing overhead
+  if (metricDisaster) {
+    metricDisaster.textContent = gameState.epicDisasterLevel;
+  }
+  if (metricFlow) {
+    metricFlow.textContent = flowControl;
+    metricFlow.className =
+      flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+  }
 
   // Refrescar estado de los pasos SRAP
   srapSteps.forEach((step) => {
