@@ -37,20 +37,92 @@ const levelTitles = {
 const customModal = document.getElementById("custom-modal");
 const modalTitle = document.getElementById("modal-title");
 const modalMessage = document.getElementById("modal-message");
+let lastFocusedElement = null; // Store the element that triggered the modal
 
 // === 3. FUNCIONES DE UI Y ALERTA PERSONALIZADA ===
 
+// Handle keyboard interactions for the modal (Escape to close, Tab to trap focus)
+function handleModalKeydown(e) {
+  // If modal is hidden, do nothing
+  if (customModal.classList.contains("hidden")) return;
+
+  if (e.key === "Escape") {
+    hideCustomAlert();
+    e.preventDefault();
+    return;
+  }
+
+  if (e.key === "Tab") {
+    // Focus trap logic
+    const focusableElements = customModal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    );
+
+    if (focusableElements.length === 0) {
+      e.preventDefault();
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    // If focus is not inside modal, force it inside
+    if (!customModal.contains(document.activeElement)) {
+      e.preventDefault();
+      firstElement.focus();
+      return;
+    }
+
+    if (e.shiftKey) {
+      if (document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement.focus();
+      }
+    } else {
+      if (document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement.focus();
+      }
+    }
+  }
+}
+
+// Add event listener for modal keyboard navigation
+document.addEventListener("keydown", handleModalKeydown);
+
 // Reemplazo de alert() con un modal estilizado
 function showCustomAlert(message, title = "¡Notificación Warrior!") {
+  // Only save focus if modal wasn't already open to avoid saving the modal itself as the return target
+  if (customModal.classList.contains("hidden")) {
+    lastFocusedElement = document.activeElement;
+  }
+
   modalTitle.textContent = title;
   modalMessage.innerHTML = message;
   customModal.classList.remove("hidden");
   customModal.classList.add("flex");
+
+  // Focus the first actionable element (button or link)
+  // We use setTimeout to ensure the DOM is updated and element is visible/focusable
+  setTimeout(() => {
+    const focusable = customModal.querySelector("button, a");
+    if (focusable) {
+      focusable.focus();
+    } else {
+      // Fallback: focus the modal container if no buttons (unlikely but safe)
+      customModal.setAttribute("tabindex", "-1");
+      customModal.focus();
+    }
+  }, 50);
 }
 
 function hideCustomAlert() {
   customModal.classList.add("hidden");
   customModal.classList.remove("flex");
+
+  if (lastFocusedElement) {
+    lastFocusedElement.focus(); // Restore focus
+  }
 }
 
 // Show Paywall Modal
@@ -117,7 +189,21 @@ function updateUI() {
         "nav-active",
         parseInt(level) === gameState.currentLevel,
       );
-      btn.disabled = isLocked;
+
+      // Accessibility: Use aria-current for active page
+      if (parseInt(level) === gameState.currentLevel) {
+        btn.setAttribute("aria-current", "page");
+      } else {
+        btn.removeAttribute("aria-current");
+      }
+
+      // Accessibility: Use aria-disabled instead of disabled attribute so users can click and see the locked message
+      if (isLocked) {
+        btn.setAttribute("aria-disabled", "true");
+      } else {
+        btn.removeAttribute("aria-disabled");
+      }
+      btn.disabled = false;
     }
   });
 }
