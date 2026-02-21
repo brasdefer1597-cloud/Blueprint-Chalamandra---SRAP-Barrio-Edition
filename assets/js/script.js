@@ -40,17 +40,34 @@ const modalMessage = document.getElementById("modal-message");
 
 // === 3. FUNCIONES DE UI Y ALERTA PERSONALIZADA ===
 
+let lastFocusedElement = null;
+
 // Reemplazo de alert() con un modal estilizado
 function showCustomAlert(message, title = "¡Notificación Warrior!") {
+  // Save focus
+  lastFocusedElement = document.activeElement;
+
   modalTitle.textContent = title;
   modalMessage.innerHTML = message;
   customModal.classList.remove("hidden");
   customModal.classList.add("flex");
+
+  // Focus management
+  const closeBtn = customModal.querySelector(
+    'button[onclick="hideCustomAlert()"]',
+  );
+  if (closeBtn) closeBtn.focus();
 }
 
 function hideCustomAlert() {
   customModal.classList.add("hidden");
   customModal.classList.remove("flex");
+
+  // Restore focus
+  if (lastFocusedElement) {
+    lastFocusedElement.focus();
+    lastFocusedElement = null;
+  }
 }
 
 // Show Paywall Modal
@@ -312,6 +329,53 @@ function revealHatInsight(element, hatType, insightText) {
 }
 
 // === 6. ACCESIBILIDAD ===
+
+let isModalAccessibilitySetup = false;
+
+function setupModalAccessibility() {
+  if (isModalAccessibilitySetup) return;
+
+  // Set accessible attributes for the modal
+  if (customModal) {
+    customModal.setAttribute("role", "dialog");
+    customModal.setAttribute("aria-modal", "true");
+    customModal.setAttribute("aria-labelledby", "modal-title");
+    customModal.setAttribute("aria-describedby", "modal-message");
+  }
+
+  // Handle Escape key to close modal
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !customModal.classList.contains("hidden")) {
+      hideCustomAlert();
+    }
+
+    // Focus trap inside modal
+    if (!customModal.classList.contains("hidden") && e.key === "Tab") {
+      const focusableElements = customModal.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) {
+        // Shift + Tab
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        // Tab
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    }
+  });
+
+  isModalAccessibilitySetup = true;
+}
+
 // Mejora la accesibilidad de elementos interactivos personalizados
 function enhanceAccessibility() {
   // Optimization: Use event delegation to reduce event listeners from N to 1 and improve memory usage.
@@ -347,4 +411,5 @@ window.initGame = function (mode) {
   // I will keep the progression logic but remove the paywall blocks.
   renderLevel(0);
   enhanceAccessibility();
+  setupModalAccessibility();
 };
