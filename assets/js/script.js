@@ -17,6 +17,16 @@ const mainTitle = document.getElementById("main-title");
 const insightCounter = document.getElementById("insight-counter");
 const chaosMetricDisplay = document.getElementById("chaos-metric-display");
 
+// Optimization: Pre-create structure to avoid innerHTML in loop
+let metricDisasterSpan, metricFlowSpan;
+
+if (chaosMetricDisplay) {
+  // Initial structure
+  chaosMetricDisplay.innerHTML = `Desastre Épico: <span id="metric-disaster" class="text-red-400">0</span> | Flow Control (Ratio Insight/Actividad): <span id="metric-flow" class="text-yellow-400">0</span>`;
+  metricDisasterSpan = document.getElementById("metric-disaster");
+  metricFlowSpan = document.getElementById("metric-flow");
+}
+
 // Optimization: Cache frequently accessed DOM elements to prevent layout thrashing
 const srapSteps = document.querySelectorAll(".srap-step");
 const mandalaHats = document.querySelectorAll(".mandala-hat");
@@ -82,7 +92,15 @@ function updateUI() {
       ? (gameState.insightPoints / totalActivity).toFixed(2)
       : 0;
 
-  chaosMetricDisplay.innerHTML = `Desastre Épico: <span class="text-red-400">${gameState.epicDisasterLevel}</span> | Flow Control (Ratio Insight/Actividad): <span class="${flowControl > 1.5 ? "text-lime-400" : "text-yellow-400"}">${flowControl}</span>`;
+  // Optimization: Update textContent directly to avoid re-parsing HTML
+  if (metricDisasterSpan) {
+    metricDisasterSpan.textContent = gameState.epicDisasterLevel;
+  }
+  if (metricFlowSpan) {
+    metricFlowSpan.textContent = flowControl;
+    metricFlowSpan.className =
+      flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+  }
 
   // Refrescar estado de los pasos SRAP
   srapSteps.forEach((step) => {
