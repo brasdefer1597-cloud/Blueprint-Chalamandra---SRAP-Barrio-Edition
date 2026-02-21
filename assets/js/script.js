@@ -16,6 +16,8 @@ const levelSections = document.querySelectorAll(".level-section");
 const mainTitle = document.getElementById("main-title");
 const insightCounter = document.getElementById("insight-counter");
 const chaosMetricDisplay = document.getElementById("chaos-metric-display");
+const metricDisaster = document.getElementById("metric-disaster");
+const metricFlow = document.getElementById("metric-flow");
 
 // Optimization: Cache frequently accessed DOM elements to prevent layout thrashing
 const srapSteps = document.querySelectorAll(".srap-step");
@@ -82,7 +84,13 @@ function updateUI() {
       ? (gameState.insightPoints / totalActivity).toFixed(2)
       : 0;
 
-  chaosMetricDisplay.innerHTML = `Desastre Épico: <span class="text-red-400">${gameState.epicDisasterLevel}</span> | Flow Control (Ratio Insight/Actividad): <span class="${flowControl > 1.5 ? "text-lime-400" : "text-yellow-400"}">${flowControl}</span>`;
+  if (metricDisaster && metricFlow) {
+    metricDisaster.textContent = gameState.epicDisasterLevel;
+    metricFlow.textContent = flowControl;
+    metricFlow.className = flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+  } else {
+    chaosMetricDisplay.innerHTML = `Desastre Épico: <span class="text-red-400">${gameState.epicDisasterLevel}</span> | Flow Control (Ratio Insight/Actividad): <span class="${flowControl > 1.5 ? "text-lime-400" : "text-yellow-400"}">${flowControl}</span>`;
+  }
 
   // Refrescar estado de los pasos SRAP
   srapSteps.forEach((step) => {
@@ -268,7 +276,6 @@ function checkMandalaSynergy() {
         `🎉 ¡SINERGIA CHALAMANDRA ACTIVADA! 🎉 Has pasado del CAOS (Creativo) al CONTROL (Táctico) perfectamente. **BONUS: +${bonus} Insights**.`,
         "¡ÉPICO COMBO!",
       );
-      updateUI();
       return true;
     }
   }
@@ -289,7 +296,9 @@ function revealHatInsight(element, hatType, insightText) {
       gameState.hatSequence.push(hatType);
     }
 
-    checkMandalaSynergy(); // Check synergy even if re-clicking
+    if (checkMandalaSynergy()) {
+      updateUI();
+    }
     return;
   }
 
