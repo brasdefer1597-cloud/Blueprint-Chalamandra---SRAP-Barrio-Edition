@@ -147,12 +147,14 @@ function renderLevel(level) {
     return;
   }
 
-  gameState.currentLevel = level;
+  // Optimization: Hide previous level specifically (O(1)) instead of iterating all sections (O(N))
+  const previousLevel = gameState.currentLevel;
+  const previousSection = document.getElementById(`level-${previousLevel}`);
+  if (previousSection) {
+    previousSection.classList.add("hidden");
+  }
 
-  // Ocultar todos y mostrar el activo
-  levelSections.forEach((section) => {
-    section.classList.add("hidden");
-  });
+  gameState.currentLevel = level;
 
   const activeSection = document.getElementById(`level-${level}`);
   if (activeSection) {
