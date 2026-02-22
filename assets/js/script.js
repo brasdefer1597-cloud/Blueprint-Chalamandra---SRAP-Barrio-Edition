@@ -12,7 +12,6 @@ const gameState = {
 let gameMode = "demo"; // 'demo' or 'full'
 
 // === 2. REFERENCIAS Y MAPEO DE UI ===
-const levelSections = document.querySelectorAll(".level-section");
 const mainTitle = document.getElementById("main-title");
 const insightCounter = document.getElementById("insight-counter");
 const chaosMetricDisplay = document.getElementById("chaos-metric-display");
@@ -92,23 +91,25 @@ function updateUI() {
   // Refrescar estado de los pasos SRAP
   srapSteps.forEach((step) => {
     const stepId = step.id;
-    if (gameState.collectedSteps[stepId]) {
-      step.classList.add("srap-active");
-      step.style.cursor = "default";
-    } else {
-      step.classList.remove("srap-active");
-      step.style.cursor = "pointer";
+    const isCollected = !!gameState.collectedSteps[stepId];
+    const isActive = step.classList.contains("srap-active");
+
+    // Optimization: Avoid layout thrashing by checking before writing
+    if (isCollected !== isActive) {
+      step.classList.toggle("srap-active", isCollected);
+      step.style.cursor = isCollected ? "default" : "pointer";
     }
   });
 
   // Refrescar estado de los sombreros
   mandalaHats.forEach((hat) => {
     const hatType = hat.id.replace("hat-", "");
-    if (gameState.collectedHats[hatType]) {
-      // Si ya está activo, permitimos que el usuario lo active/desactive visualmente
-      hat.style.borderColor = "var(--neon-lime)";
-    } else {
-      hat.style.borderColor = "var(--neon-purple)";
+    const isCollected = !!gameState.collectedHats[hatType];
+    const targetColor = isCollected ? "var(--neon-lime)" : "var(--neon-purple)";
+
+    // Optimization: Avoid style recalc if not needed
+    if (hat.style.borderColor !== targetColor) {
+      hat.style.borderColor = targetColor;
     }
   });
 
@@ -147,14 +148,19 @@ function renderLevel(level) {
     return;
   }
 
+  // Optimization: Only hide the previously active section instead of iterating all
+  // This reduces DOM operations from O(N) to O(1)
+  const previousSection = document.getElementById(
+    `level-${gameState.currentLevel}`,
+  );
+  const activeSection = document.getElementById(`level-${level}`);
+
+  if (previousSection && previousSection !== activeSection) {
+    previousSection.classList.add("hidden");
+  }
+
   gameState.currentLevel = level;
 
-  // Ocultar todos y mostrar el activo
-  levelSections.forEach((section) => {
-    section.classList.add("hidden");
-  });
-
-  const activeSection = document.getElementById(`level-${level}`);
   if (activeSection) {
     activeSection.classList.remove("hidden");
   }
