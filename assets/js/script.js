@@ -12,7 +12,6 @@ const gameState = {
 let gameMode = "demo"; // 'demo' or 'full'
 
 // === 2. REFERENCIAS Y MAPEO DE UI ===
-const levelSections = document.querySelectorAll(".level-section");
 const mainTitle = document.getElementById("main-title");
 const insightCounter = document.getElementById("insight-counter");
 const chaosMetricDisplay = document.getElementById("chaos-metric-display");
@@ -90,25 +89,26 @@ function updateUI() {
     flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
 
   // Refrescar estado de los pasos SRAP
+  // Optimization: Check state before DOM updates to avoid layout thrashing
   srapSteps.forEach((step) => {
     const stepId = step.id;
-    if (gameState.collectedSteps[stepId]) {
-      step.classList.add("srap-active");
-      step.style.cursor = "default";
-    } else {
-      step.classList.remove("srap-active");
-      step.style.cursor = "pointer";
+    const isCollected = !!gameState.collectedSteps[stepId];
+    const isActive = step.classList.contains("srap-active");
+
+    if (isCollected !== isActive) {
+      step.classList.toggle("srap-active", isCollected);
+      step.style.cursor = isCollected ? "default" : "pointer";
     }
   });
 
   // Refrescar estado de los sombreros
   mandalaHats.forEach((hat) => {
     const hatType = hat.id.replace("hat-", "");
-    if (gameState.collectedHats[hatType]) {
-      // Si ya está activo, permitimos que el usuario lo active/desactive visualmente
-      hat.style.borderColor = "var(--neon-lime)";
-    } else {
-      hat.style.borderColor = "var(--neon-purple)";
+    const isCollected = !!gameState.collectedHats[hatType];
+    const targetColor = isCollected ? "var(--neon-lime)" : "var(--neon-purple)";
+
+    if (hat.style.borderColor !== targetColor) {
+      hat.style.borderColor = targetColor;
     }
   });
 
@@ -147,17 +147,21 @@ function renderLevel(level) {
     return;
   }
 
-  gameState.currentLevel = level;
-
-  // Ocultar todos y mostrar el activo
-  levelSections.forEach((section) => {
-    section.classList.add("hidden");
-  });
-
+  // Optimization: Only hide the previously active section instead of iterating all (O(N) -> O(1))
+  const previousSection = document.getElementById(
+    `level-${gameState.currentLevel}`,
+  );
   const activeSection = document.getElementById(`level-${level}`);
+
+  if (previousSection && previousSection !== activeSection) {
+    previousSection.classList.add("hidden");
+  }
+
   if (activeSection) {
     activeSection.classList.remove("hidden");
   }
+
+  gameState.currentLevel = level;
 
   // Actualizar título y UI
   mainTitle.textContent = levelTitles[level];
