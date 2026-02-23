@@ -12,7 +12,7 @@ const gameState = {
 let gameMode = "demo"; // 'demo' or 'full'
 
 // === 2. REFERENCIAS Y MAPEO DE UI ===
-const levelSections = document.querySelectorAll(".level-section");
+// Removed: const levelSections = document.querySelectorAll(".level-section"); // Optimized out
 const mainTitle = document.getElementById("main-title");
 const insightCounter = document.getElementById("insight-counter");
 const chaosMetricDisplay = document.getElementById("chaos-metric-display");
@@ -20,8 +20,7 @@ const metricDisaster = document.getElementById("metric-disaster");
 const metricFlow = document.getElementById("metric-flow");
 
 // Optimization: Cache frequently accessed DOM elements to prevent layout thrashing
-const srapSteps = document.querySelectorAll(".srap-step");
-const mandalaHats = document.querySelectorAll(".mandala-hat");
+// Removed global querySelectorAll for srapSteps and mandalaHats as they are accessed directly in handlers
 const navButtons = {};
 [0, 2, 3, 5].forEach((level) => {
   const btn = document.getElementById(`nav-btn-${level}`);
@@ -90,27 +89,10 @@ function updateUI() {
     flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
 
   // Refrescar estado de los pasos SRAP
-  srapSteps.forEach((step) => {
-    const stepId = step.id;
-    if (gameState.collectedSteps[stepId]) {
-      step.classList.add("srap-active");
-      step.style.cursor = "default";
-    } else {
-      step.classList.remove("srap-active");
-      step.style.cursor = "pointer";
-    }
-  });
+  // Optimized: Moved DOM updates directly to collectInsight to avoid O(N) loop on every UI update.
 
   // Refrescar estado de los sombreros
-  mandalaHats.forEach((hat) => {
-    const hatType = hat.id.replace("hat-", "");
-    if (gameState.collectedHats[hatType]) {
-      // Si ya está activo, permitimos que el usuario lo active/desactive visualmente
-      hat.style.borderColor = "var(--neon-lime)";
-    } else {
-      hat.style.borderColor = "var(--neon-purple)";
-    }
-  });
+  // Optimized: Moved DOM updates directly to revealHatInsight to avoid O(N) loop on every UI update.
 
   // Actualizar barra de navegación
   Object.keys(gameState.unlockedLevels).forEach((level) => {
@@ -147,12 +129,16 @@ function renderLevel(level) {
     return;
   }
 
-  gameState.currentLevel = level;
+  // Optimization: Only hide the previously visible section instead of looping all sections.
+  const previousLevel = gameState.currentLevel;
+  if (previousLevel !== undefined) {
+    const previousSection = document.getElementById(`level-${previousLevel}`);
+    if (previousSection) {
+      previousSection.classList.add("hidden");
+    }
+  }
 
-  // Ocultar todos y mostrar el activo
-  levelSections.forEach((section) => {
-    section.classList.add("hidden");
-  });
+  gameState.currentLevel = level;
 
   const activeSection = document.getElementById(`level-${level}`);
   if (activeSection) {
@@ -191,6 +177,10 @@ function collectInsight(element, stepId, points) {
   // Ganar punto
   gameState.insightPoints += points;
   gameState.collectedSteps[stepId] = true;
+
+  // Optimization: Update DOM immediately to avoid full re-render loop
+  element.classList.add("srap-active");
+  element.style.cursor = "default";
 
   // Mensaje de recompensa
   let message = `¡Paso SRAP **${stepId.toUpperCase()}** completado! Has ganado **${points} Insights**.`;
@@ -302,6 +292,9 @@ function revealHatInsight(element, hatType, insightText) {
   gameState.insightPoints += points;
   gameState.collectedHats[hatType] = true;
   gameState.hatSequence.push(hatType); // Add to sequence
+
+  // Optimization: Update visual state directly
+  element.style.borderColor = "var(--neon-lime)";
 
   // Mostrar Insight
   element.classList.add("hat-revealed");
