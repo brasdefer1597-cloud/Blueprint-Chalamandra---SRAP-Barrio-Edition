@@ -69,12 +69,12 @@ function showPaywallModal() {
   showCustomAlert(message, "🔒 Contenido Premium");
 }
 
-// Actualiza el contador global y la métrica de caos
-function updateUI() {
+// === OPTIMIZATION: GRANULAR UPDATE FUNCTIONS ===
+
+function updateScores() {
   insightCounter.textContent = gameState.insightPoints;
 
   // Lógica de la Métrica de Desmadre/Caos (Premium)
-  // Esto es una medida de cuánto caos has generado vs. cuánto Insight tienes.
   const totalActivity =
     Object.keys(gameState.collectedSteps).length +
     gameState.epicDisasterLevel +
@@ -88,31 +88,9 @@ function updateUI() {
   metricFlow.textContent = flowControl;
   metricFlow.className =
     flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+}
 
-  // Refrescar estado de los pasos SRAP
-  srapSteps.forEach((step) => {
-    const stepId = step.id;
-    if (gameState.collectedSteps[stepId]) {
-      step.classList.add("srap-active");
-      step.style.cursor = "default";
-    } else {
-      step.classList.remove("srap-active");
-      step.style.cursor = "pointer";
-    }
-  });
-
-  // Refrescar estado de los sombreros
-  mandalaHats.forEach((hat) => {
-    const hatType = hat.id.replace("hat-", "");
-    if (gameState.collectedHats[hatType]) {
-      // Si ya está activo, permitimos que el usuario lo active/desactive visualmente
-      hat.style.borderColor = "var(--neon-lime)";
-    } else {
-      hat.style.borderColor = "var(--neon-purple)";
-    }
-  });
-
-  // Actualizar barra de navegación
+function updateNavigation() {
   Object.keys(gameState.unlockedLevels).forEach((level) => {
     const btn = navButtons[level];
     const isLocked = !gameState.unlockedLevels[level];
@@ -125,6 +103,34 @@ function updateUI() {
       btn.disabled = isLocked;
     }
   });
+}
+
+function updateStepVisual(step) {
+  const stepId = step.id;
+  if (gameState.collectedSteps[stepId]) {
+    step.classList.add("srap-active");
+    step.style.cursor = "default";
+  } else {
+    step.classList.remove("srap-active");
+    step.style.cursor = "pointer";
+  }
+}
+
+function updateHatVisual(hat) {
+  const hatType = hat.id.replace("hat-", "");
+  if (gameState.collectedHats[hatType]) {
+    hat.style.borderColor = "var(--neon-lime)";
+  } else {
+    hat.style.borderColor = "var(--neon-purple)";
+  }
+}
+
+// Replaces the monolithic updateUI for full syncs (e.g. level load)
+function syncAllVisuals() {
+  updateScores();
+  updateNavigation();
+  srapSteps.forEach(updateStepVisual);
+  mandalaHats.forEach(updateHatVisual);
 }
 
 // === 4. FUNCIONES DE NAVEGACIÓN Y FLUJO LÓGICO ===
@@ -161,7 +167,7 @@ function renderLevel(level) {
 
   // Actualizar título y UI
   mainTitle.textContent = levelTitles[level];
-  updateUI();
+  syncAllVisuals(); // Full sync when changing context
 }
 
 // Desbloquea un nivel y luego lo renderiza (llamado por los CTAs de avance)
@@ -204,7 +210,10 @@ function collectInsight(element, stepId, points) {
   message += `<br/><br/>**REGLA:** El sistema registra tu click asumiendo que **completaste la Tarea de Reflexión** asociada. ¡Bien jugado, Warrior!`;
 
   showCustomAlert(message, "SRAP Dominado");
-  updateUI();
+
+  // Optimization: Update only what changed
+  updateScores();
+  updateStepVisual(element);
 }
 
 // Nivel 3: Rituales de Caos (Impacto en la Métrica de Desmadre y Riesgo/Recompensa)
@@ -251,7 +260,9 @@ function startChaosRitual(ritualType) {
     message + "<br/><br/>" + epicDisasterMessage + practiceRule,
     title,
   );
-  updateUI();
+
+  // Optimization: Update only scores
+  updateScores();
 }
 
 // Función para verificar la sinergia del Mandala (Creativo -> Crítico -> Táctico)
@@ -273,7 +284,7 @@ function checkMandalaSynergy() {
         `🎉 ¡SINERGIA CHALAMANDRA ACTIVADA! 🎉 Has pasado del CAOS (Creativo) al CONTROL (Táctico) perfectamente. **BONUS: +${bonus} Insights**.`,
         "¡ÉPICO COMBO!",
       );
-      updateUI();
+      updateScores();
       return true;
     }
   }
@@ -313,7 +324,10 @@ function revealHatInsight(element, hatType, insightText) {
   showCustomAlert(message, "Mandala Activo");
 
   checkMandalaSynergy(); // Check synergy
-  updateUI();
+
+  // Optimization: Update scores and specific hat
+  updateScores();
+  updateHatVisual(element);
 }
 
 // === 6. ACCESIBILIDAD ===
