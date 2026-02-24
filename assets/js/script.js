@@ -10,6 +10,7 @@ const gameState = {
 };
 
 let gameMode = "demo"; // 'demo' or 'full'
+let lastFocusedElement = null; // To restore focus after modal closes
 
 // === 2. REFERENCIAS Y MAPEO DE UI ===
 const levelSections = document.querySelectorAll(".level-section");
@@ -44,15 +45,29 @@ const modalMessage = document.getElementById("modal-message");
 
 // Reemplazo de alert() con un modal estilizado
 function showCustomAlert(message, title = "¡Notificación Warrior!") {
+  // Save focus
+  lastFocusedElement = document.activeElement;
+
   modalTitle.textContent = title;
   modalMessage.innerHTML = message;
   customModal.classList.remove("hidden");
   customModal.classList.add("flex");
+
+  // Move focus to modal (close button)
+  const closeBtn = customModal.querySelector("button");
+  if (closeBtn) {
+    closeBtn.focus();
+  }
 }
 
 function hideCustomAlert() {
   customModal.classList.add("hidden");
   customModal.classList.remove("flex");
+
+  // Restore focus
+  if (lastFocusedElement) {
+    lastFocusedElement.focus();
+  }
 }
 
 // Show Paywall Modal
@@ -317,6 +332,29 @@ function revealHatInsight(element, hatType, insightText) {
 }
 
 // === 6. ACCESIBILIDAD ===
+
+// Configura la accesibilidad del modal (focus trap simple, escape key)
+function setupModalAccessibility() {
+  // Prevent duplicate listeners
+  if (customModal.getAttribute("data-a11y-init")) return;
+
+  // ARIA Attributes
+  customModal.setAttribute("role", "dialog");
+  customModal.setAttribute("aria-modal", "true");
+  customModal.setAttribute("aria-labelledby", "modal-title");
+  customModal.setAttribute("aria-describedby", "modal-message");
+
+  // Escape key listener to close modal
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !customModal.classList.contains("hidden")) {
+      hideCustomAlert();
+    }
+  });
+
+  // Mark as initialized
+  customModal.setAttribute("data-a11y-init", "true");
+}
+
 // Mejora la accesibilidad de elementos interactivos personalizados
 function enhanceAccessibility() {
   // Optimization: Use event delegation to reduce event listeners from N to 1 and improve memory usage.
@@ -352,4 +390,5 @@ window.initGame = function (mode) {
   // I will keep the progression logic but remove the paywall blocks.
   renderLevel(0);
   enhanceAccessibility();
+  setupModalAccessibility();
 };
