@@ -69,6 +69,34 @@ function showPaywallModal() {
   showCustomAlert(message, "🔒 Contenido Premium");
 }
 
+// Helper to update a single SRAP step visual
+function updateStepVisual(step) {
+  const stepId = step.id;
+  if (gameState.collectedSteps[stepId]) {
+    step.classList.add("srap-active");
+    step.style.cursor = "default";
+  } else {
+    step.classList.remove("srap-active");
+    step.style.cursor = "pointer";
+  }
+}
+
+// Helper to update a single Mandala Hat visual
+function updateHatVisual(hat) {
+  const hatType = hat.id.replace("hat-", "");
+  if (gameState.collectedHats[hatType]) {
+    hat.style.borderColor = "var(--neon-lime)";
+  } else {
+    hat.style.borderColor = "var(--neon-purple)";
+  }
+}
+
+// Initial sync of all visuals (called on game init)
+function syncAllVisuals() {
+  srapSteps.forEach(updateStepVisual);
+  mandalaHats.forEach(updateHatVisual);
+}
+
 // Actualiza el contador global y la métrica de caos
 function updateUI() {
   insightCounter.textContent = gameState.insightPoints;
@@ -89,28 +117,8 @@ function updateUI() {
   metricFlow.className =
     flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
 
-  // Refrescar estado de los pasos SRAP
-  srapSteps.forEach((step) => {
-    const stepId = step.id;
-    if (gameState.collectedSteps[stepId]) {
-      step.classList.add("srap-active");
-      step.style.cursor = "default";
-    } else {
-      step.classList.remove("srap-active");
-      step.style.cursor = "pointer";
-    }
-  });
-
-  // Refrescar estado de los sombreros
-  mandalaHats.forEach((hat) => {
-    const hatType = hat.id.replace("hat-", "");
-    if (gameState.collectedHats[hatType]) {
-      // Si ya está activo, permitimos que el usuario lo active/desactive visualmente
-      hat.style.borderColor = "var(--neon-lime)";
-    } else {
-      hat.style.borderColor = "var(--neon-purple)";
-    }
-  });
+  // Optimization: Removed O(N) loops for steps and hats from here.
+  // Visuals are now updated via targeted updates in interaction functions.
 
   // Actualizar barra de navegación
   Object.keys(gameState.unlockedLevels).forEach((level) => {
@@ -147,12 +155,16 @@ function renderLevel(level) {
     return;
   }
 
-  gameState.currentLevel = level;
+  // Optimization: Hide previous level (O(1)) instead of iterating all sections (O(N))
+  const previousLevel = gameState.currentLevel;
+  if (previousLevel !== level) {
+    const previousSection = document.getElementById(`level-${previousLevel}`);
+    if (previousSection) {
+      previousSection.classList.add("hidden");
+    }
+  }
 
-  // Ocultar todos y mostrar el activo
-  levelSections.forEach((section) => {
-    section.classList.add("hidden");
-  });
+  gameState.currentLevel = level;
 
   const activeSection = document.getElementById(`level-${level}`);
   if (activeSection) {
@@ -191,6 +203,9 @@ function collectInsight(element, stepId, points) {
   // Ganar punto
   gameState.insightPoints += points;
   gameState.collectedSteps[stepId] = true;
+
+  // Optimization: Update only this step visual (O(1))
+  updateStepVisual(element);
 
   // Mensaje de recompensa
   let message = `¡Paso SRAP **${stepId.toUpperCase()}** completado! Has ganado **${points} Insights**.`;
@@ -303,6 +318,9 @@ function revealHatInsight(element, hatType, insightText) {
   gameState.collectedHats[hatType] = true;
   gameState.hatSequence.push(hatType); // Add to sequence
 
+  // Optimization: Update only this hat visual (O(1))
+  updateHatVisual(element);
+
   // Mostrar Insight
   element.classList.add("hat-revealed");
 
@@ -350,6 +368,7 @@ window.initGame = function (mode) {
   // User says "Full Premium Post-Payment". Usually that means everything is accessible or they can progress through it.
   // The original code had unlockedLevels: { 0: true, 2: false... }
   // I will keep the progression logic but remove the paywall blocks.
+  syncAllVisuals(); // Initialize visuals based on state
   renderLevel(0);
   enhanceAccessibility();
 };
