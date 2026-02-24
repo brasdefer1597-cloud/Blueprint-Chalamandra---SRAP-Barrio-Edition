@@ -42,6 +42,32 @@ const modalMessage = document.getElementById("modal-message");
 
 // === 3. FUNCIONES DE UI Y ALERTA PERSONALIZADA ===
 
+// Optimization: Helpers for targeted UI updates to avoid O(N) loops in critical path
+function updateStepVisual(step) {
+  const stepId = step.id;
+  if (gameState.collectedSteps[stepId]) {
+    step.classList.add("srap-active");
+    step.style.cursor = "default";
+  } else {
+    step.classList.remove("srap-active");
+    step.style.cursor = "pointer";
+  }
+}
+
+function updateHatVisual(hat) {
+  const hatType = hat.id.replace("hat-", "");
+  if (gameState.collectedHats[hatType]) {
+    hat.style.borderColor = "var(--neon-lime)";
+  } else {
+    hat.style.borderColor = "var(--neon-purple)";
+  }
+}
+
+function syncAllVisuals() {
+  srapSteps.forEach(updateStepVisual);
+  mandalaHats.forEach(updateHatVisual);
+}
+
 // Reemplazo de alert() con un modal estilizado
 function showCustomAlert(message, title = "¡Notificación Warrior!") {
   modalTitle.textContent = title;
@@ -89,28 +115,8 @@ function updateUI() {
   metricFlow.className =
     flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
 
-  // Refrescar estado de los pasos SRAP
-  srapSteps.forEach((step) => {
-    const stepId = step.id;
-    if (gameState.collectedSteps[stepId]) {
-      step.classList.add("srap-active");
-      step.style.cursor = "default";
-    } else {
-      step.classList.remove("srap-active");
-      step.style.cursor = "pointer";
-    }
-  });
-
-  // Refrescar estado de los sombreros
-  mandalaHats.forEach((hat) => {
-    const hatType = hat.id.replace("hat-", "");
-    if (gameState.collectedHats[hatType]) {
-      // Si ya está activo, permitimos que el usuario lo active/desactive visualmente
-      hat.style.borderColor = "var(--neon-lime)";
-    } else {
-      hat.style.borderColor = "var(--neon-purple)";
-    }
-  });
+  // Optimization: Removed O(N) loops for steps and hats.
+  // Visual state is now updated directly in event handlers via updateStepVisual/updateHatVisual.
 
   // Actualizar barra de navegación
   Object.keys(gameState.unlockedLevels).forEach((level) => {
@@ -204,6 +210,7 @@ function collectInsight(element, stepId, points) {
   message += `<br/><br/>**REGLA:** El sistema registra tu click asumiendo que **completaste la Tarea de Reflexión** asociada. ¡Bien jugado, Warrior!`;
 
   showCustomAlert(message, "SRAP Dominado");
+  updateStepVisual(element);
   updateUI();
 }
 
@@ -313,6 +320,7 @@ function revealHatInsight(element, hatType, insightText) {
   showCustomAlert(message, "Mandala Activo");
 
   checkMandalaSynergy(); // Check synergy
+  updateHatVisual(element);
   updateUI();
 }
 
@@ -350,6 +358,7 @@ window.initGame = function (mode) {
   // User says "Full Premium Post-Payment". Usually that means everything is accessible or they can progress through it.
   // The original code had unlockedLevels: { 0: true, 2: false... }
   // I will keep the progression logic but remove the paywall blocks.
+  syncAllVisuals();
   renderLevel(0);
   enhanceAccessibility();
 };
