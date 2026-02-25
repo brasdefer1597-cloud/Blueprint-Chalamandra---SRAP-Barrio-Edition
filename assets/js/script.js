@@ -55,26 +55,12 @@ function hideCustomAlert() {
   customModal.classList.remove("flex");
 }
 
-// Show Paywall Modal
-function showPaywallModal() {
-  const kofiUrl = "https://ko-fi.com/s/8b46c1c1cd";
-  const message = `
-    <p class="mb-4">¡Alto ahí, Warrior! Has dominado la Demo.</p>
-    <p class="mb-4">Para acceder al <strong>Caos Controlado (Nivel 3)</strong> y al <strong>Mandala Multiconsciente (Nivel 5)</strong>, necesitas la versión completa.</p>
-    <a href="${kofiUrl}" target="_blank" class="cta-button px-6 py-3 rounded-full text-base font-bold inline-block mt-2 text-black hover:text-black">
-      🔓 Desbloquear Premium
-    </a>
-    <p class="text-xs text-gray-400 mt-4">Acceso inmediato tras el pago.</p>
-  `;
-  showCustomAlert(message, "🔒 Contenido Premium");
-}
+// === OPTIMIZACIÓN: FUNCIONES DE ACTUALIZACIÓN VISUAL GRANULAR (O(1)) ===
 
-// Actualiza el contador global y la métrica de caos
-function updateUI() {
+// Actualiza solo las métricas (puntos y caos)
+function updateMetrics() {
   insightCounter.textContent = gameState.insightPoints;
 
-  // Lógica de la Métrica de Desmadre/Caos (Premium)
-  // Esto es una medida de cuánto caos has generado vs. cuánto Insight tienes.
   const totalActivity =
     Object.keys(gameState.collectedSteps).length +
     gameState.epicDisasterLevel +
@@ -88,31 +74,10 @@ function updateUI() {
   metricFlow.textContent = flowControl;
   metricFlow.className =
     flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+}
 
-  // Refrescar estado de los pasos SRAP
-  srapSteps.forEach((step) => {
-    const stepId = step.id;
-    if (gameState.collectedSteps[stepId]) {
-      step.classList.add("srap-active");
-      step.style.cursor = "default";
-    } else {
-      step.classList.remove("srap-active");
-      step.style.cursor = "pointer";
-    }
-  });
-
-  // Refrescar estado de los sombreros
-  mandalaHats.forEach((hat) => {
-    const hatType = hat.id.replace("hat-", "");
-    if (gameState.collectedHats[hatType]) {
-      // Si ya está activo, permitimos que el usuario lo active/desactive visualmente
-      hat.style.borderColor = "var(--neon-lime)";
-    } else {
-      hat.style.borderColor = "var(--neon-purple)";
-    }
-  });
-
-  // Actualizar barra de navegación
+// Actualiza solo la navegación
+function updateNav() {
   Object.keys(gameState.unlockedLevels).forEach((level) => {
     const btn = navButtons[level];
     const isLocked = !gameState.unlockedLevels[level];
@@ -125,6 +90,51 @@ function updateUI() {
       btn.disabled = isLocked;
     }
   });
+}
+
+// Actualiza visualmente un solo paso SRAP
+function updateStepVisual(step, isCollected) {
+  if (isCollected) {
+    step.classList.add("srap-active");
+    step.style.cursor = "default";
+  } else {
+    step.classList.remove("srap-active");
+    step.style.cursor = "pointer";
+  }
+}
+
+// Actualiza visualmente un solo sombrero
+function updateHatVisual(hat, isCollected) {
+  if (isCollected) {
+    hat.style.borderColor = "var(--neon-lime)";
+  } else {
+    hat.style.borderColor = "var(--neon-purple)";
+  }
+}
+
+// Sincroniza todo el estado visual (para inicialización)
+function syncAllVisuals() {
+  srapSteps.forEach((step) => {
+    updateStepVisual(step, gameState.collectedSteps[step.id]);
+  });
+  mandalaHats.forEach((hat) => {
+    const hatType = hat.id.replace("hat-", "");
+    updateHatVisual(hat, gameState.collectedHats[hatType]);
+  });
+}
+
+// Show Paywall Modal
+function showPaywallModal() {
+  const kofiUrl = "https://ko-fi.com/s/8b46c1c1cd";
+  const message = `
+    <p class="mb-4">¡Alto ahí, Warrior! Has dominado la Demo.</p>
+    <p class="mb-4">Para acceder al <strong>Caos Controlado (Nivel 3)</strong> y al <strong>Mandala Multiconsciente (Nivel 5)</strong>, necesitas la versión completa.</p>
+    <a href="${kofiUrl}" target="_blank" class="cta-button px-6 py-3 rounded-full text-base font-bold inline-block mt-2 text-black hover:text-black">
+      🔓 Desbloquear Premium
+    </a>
+    <p class="text-xs text-gray-400 mt-4">Acceso inmediato tras el pago.</p>
+  `;
+  showCustomAlert(message, "🔒 Contenido Premium");
 }
 
 // === 4. FUNCIONES DE NAVEGACIÓN Y FLUJO LÓGICO ===
@@ -161,7 +171,8 @@ function renderLevel(level) {
 
   // Actualizar título y UI
   mainTitle.textContent = levelTitles[level];
-  updateUI();
+  updateNav();
+  updateMetrics();
 }
 
 // Desbloquea un nivel y luego lo renderiza (llamado por los CTAs de avance)
@@ -204,7 +215,8 @@ function collectInsight(element, stepId, points) {
   message += `<br/><br/>**REGLA:** El sistema registra tu click asumiendo que **completaste la Tarea de Reflexión** asociada. ¡Bien jugado, Warrior!`;
 
   showCustomAlert(message, "SRAP Dominado");
-  updateUI();
+  updateStepVisual(element, true);
+  updateMetrics();
 }
 
 // Nivel 3: Rituales de Caos (Impacto en la Métrica de Desmadre y Riesgo/Recompensa)
@@ -251,7 +263,7 @@ function startChaosRitual(ritualType) {
     message + "<br/><br/>" + epicDisasterMessage + practiceRule,
     title,
   );
-  updateUI();
+  updateMetrics();
 }
 
 // Función para verificar la sinergia del Mandala (Creativo -> Crítico -> Táctico)
@@ -273,7 +285,7 @@ function checkMandalaSynergy() {
         `🎉 ¡SINERGIA CHALAMANDRA ACTIVADA! 🎉 Has pasado del CAOS (Creativo) al CONTROL (Táctico) perfectamente. **BONUS: +${bonus} Insights**.`,
         "¡ÉPICO COMBO!",
       );
-      updateUI();
+      updateMetrics();
       return true;
     }
   }
@@ -302,6 +314,7 @@ function revealHatInsight(element, hatType, insightText) {
   gameState.insightPoints += points;
   gameState.collectedHats[hatType] = true;
   gameState.hatSequence.push(hatType); // Add to sequence
+  updateHatVisual(element, true);
 
   // Mostrar Insight
   element.classList.add("hat-revealed");
@@ -313,7 +326,7 @@ function revealHatInsight(element, hatType, insightText) {
   showCustomAlert(message, "Mandala Activo");
 
   checkMandalaSynergy(); // Check synergy
-  updateUI();
+  updateMetrics();
 }
 
 // === 6. ACCESIBILIDAD ===
@@ -350,6 +363,7 @@ window.initGame = function (mode) {
   // User says "Full Premium Post-Payment". Usually that means everything is accessible or they can progress through it.
   // The original code had unlockedLevels: { 0: true, 2: false... }
   // I will keep the progression logic but remove the paywall blocks.
+  syncAllVisuals();
   renderLevel(0);
   enhanceAccessibility();
 };

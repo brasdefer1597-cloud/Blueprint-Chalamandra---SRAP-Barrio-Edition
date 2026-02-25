@@ -7,3 +7,8 @@
 
 **Learning:** Frequent UI updates using `innerHTML` on static containers (like `#chaos-metric-display`) force unnecessary re-parsing and layout thrashing.
 **Action:** For high-frequency updates, use static HTML structures with specific ID targets (e.g., `<span id="metric-val">`) and update `textContent` and `className` directly. This preserves the DOM tree and improves rendering performance.
+
+## 2024-05-22 - [Optimization: Decoupled UI Updates]
+
+**Learning:** The monolithic `updateUI()` function iterated over all `srapSteps` and `mandalaHats` on every interaction (even irrelevant ones), causing unnecessary layout thrashing (O(N) operations).
+**Action:** Replaced `updateUI` with granular updater functions (`updateStepVisual`, `updateHatVisual`, `updateNav`, `updateMetrics`) that target only the specific elements changing state (O(1)). This reduces rendering overhead significantly during gameplay.
