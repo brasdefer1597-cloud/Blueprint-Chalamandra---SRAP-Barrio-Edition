@@ -39,20 +39,63 @@ const levelTitles = {
 const customModal = document.getElementById("custom-modal");
 const modalTitle = document.getElementById("modal-title");
 const modalMessage = document.getElementById("modal-message");
+let lastFocusedElement = null;
 
 // === 3. FUNCIONES DE UI Y ALERTA PERSONALIZADA ===
 
 // Reemplazo de alert() con un modal estilizado
 function showCustomAlert(message, title = "¡Notificación Warrior!") {
+  lastFocusedElement = document.activeElement;
   modalTitle.textContent = title;
   modalMessage.innerHTML = message;
   customModal.classList.remove("hidden");
   customModal.classList.add("flex");
+
+  // Focus trap and keyboard navigation
+  const focusable = customModal.querySelector(
+    "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])",
+  );
+  if (focusable) focusable.focus();
+
+  document.addEventListener("keydown", handleModalKeydown);
+}
+
+function handleModalKeydown(e) {
+  if (e.key === "Escape") {
+    hideCustomAlert();
+  } else if (e.key === "Tab") {
+    // Basic focus trap
+    const focusables = customModal.querySelectorAll(
+      "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])",
+    );
+    if (focusables.length === 0) return;
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+
+    if (e.shiftKey) {
+      // Shift + Tab
+      if (document.activeElement === first) {
+        last.focus();
+        e.preventDefault();
+      }
+    } else {
+      // Tab
+      if (document.activeElement === last) {
+        first.focus();
+        e.preventDefault();
+      }
+    }
+  }
 }
 
 function hideCustomAlert() {
   customModal.classList.add("hidden");
   customModal.classList.remove("flex");
+  document.removeEventListener("keydown", handleModalKeydown);
+  if (lastFocusedElement) {
+    lastFocusedElement.focus();
+  }
 }
 
 // Show Paywall Modal
@@ -328,6 +371,15 @@ function enhanceAccessibility() {
     element.setAttribute("role", "button");
     element.setAttribute("tabindex", "0");
   });
+
+  // Modal accessibility
+  const modal = document.getElementById("custom-modal");
+  if (modal) {
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-labelledby", "modal-title");
+    modal.setAttribute("aria-describedby", "modal-message");
+  }
 
   // Single delegated listener for keyboard support (Enter/Space)
   document.body.addEventListener("keydown", (e) => {
