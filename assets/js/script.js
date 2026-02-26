@@ -116,13 +116,20 @@ function updateUI() {
   Object.keys(gameState.unlockedLevels).forEach((level) => {
     const btn = navButtons[level];
     const isLocked = !gameState.unlockedLevels[level];
+    const isCurrent = parseInt(level) === gameState.currentLevel;
+
     if (btn) {
       btn.classList.toggle("nav-locked", isLocked);
-      btn.classList.toggle(
-        "nav-active",
-        parseInt(level) === gameState.currentLevel,
-      );
+      btn.classList.toggle("nav-active", isCurrent);
       btn.disabled = isLocked;
+
+      // Accessibility enhancements
+      btn.setAttribute("aria-disabled", isLocked.toString());
+      if (isCurrent) {
+        btn.setAttribute("aria-current", "step");
+      } else {
+        btn.removeAttribute("aria-current");
+      }
     }
   });
 }
