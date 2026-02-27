@@ -5,10 +5,13 @@ const gameState = {
   epicDisasterLevel: 0,
   collectedSteps: {}, // Pasos SRAP completados
   collectedHats: {}, // Sombreros activados
+  collectedStepsCount: 0, // Optimization: O(1) tracking
+  collectedHatsCount: 0, // Optimization: O(1) tracking
   hatSequence: [], // Secuencia de sombreros activados para el bonus de sinergia
   unlockedLevels: { 0: true, 2: false, 3: false, 5: false },
 };
 
+const LEVEL_IDS = [0, 2, 3, 5];
 let gameMode = "demo"; // 'demo' or 'full'
 
 // === 2. REFERENCIAS Y MAPEO DE UI ===
@@ -23,7 +26,7 @@ const metricFlow = document.getElementById("metric-flow");
 const srapSteps = document.querySelectorAll(".srap-step");
 const mandalaHats = document.querySelectorAll(".mandala-hat");
 const navButtons = {};
-[0, 2, 3, 5].forEach((level) => {
+LEVEL_IDS.forEach((level) => {
   const btn = document.getElementById(`nav-btn-${level}`);
   if (btn) navButtons[level] = btn;
 });
@@ -75,10 +78,11 @@ function updateUI() {
 
   // Lógica de la Métrica de Desmadre/Caos (Premium)
   // Esto es una medida de cuánto caos has generado vs. cuánto Insight tienes.
+  // Optimization: Use O(1) counters instead of O(N) Object.keys()
   const totalActivity =
-    Object.keys(gameState.collectedSteps).length +
+    gameState.collectedStepsCount +
     gameState.epicDisasterLevel +
-    Object.keys(gameState.collectedHats).length;
+    gameState.collectedHatsCount;
   const flowControl =
     totalActivity > 0
       ? (gameState.insightPoints / totalActivity).toFixed(2)
@@ -113,15 +117,12 @@ function updateUI() {
   });
 
   // Actualizar barra de navegación
-  Object.keys(gameState.unlockedLevels).forEach((level) => {
+  LEVEL_IDS.forEach((level) => {
     const btn = navButtons[level];
     const isLocked = !gameState.unlockedLevels[level];
     if (btn) {
       btn.classList.toggle("nav-locked", isLocked);
-      btn.classList.toggle(
-        "nav-active",
-        parseInt(level) === gameState.currentLevel,
-      );
+      btn.classList.toggle("nav-active", level === gameState.currentLevel);
       btn.disabled = isLocked;
     }
   });
@@ -191,6 +192,7 @@ function collectInsight(element, stepId, points) {
   // Ganar punto
   gameState.insightPoints += points;
   gameState.collectedSteps[stepId] = true;
+  gameState.collectedStepsCount++; // Optimization: Increment counter
 
   // Mensaje de recompensa
   let message = `¡Paso SRAP **${stepId.toUpperCase()}** completado! Has ganado **${points} Insights**.`;
@@ -301,6 +303,7 @@ function revealHatInsight(element, hatType, insightText) {
   // Primera activación: Ganar Insights y registrar
   gameState.insightPoints += points;
   gameState.collectedHats[hatType] = true;
+  gameState.collectedHatsCount++; // Optimization: Increment counter
   gameState.hatSequence.push(hatType); // Add to sequence
 
   // Mostrar Insight
