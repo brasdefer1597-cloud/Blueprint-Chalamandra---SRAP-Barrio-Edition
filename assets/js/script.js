@@ -40,19 +40,46 @@ const customModal = document.getElementById("custom-modal");
 const modalTitle = document.getElementById("modal-title");
 const modalMessage = document.getElementById("modal-message");
 
+let lastFocusedElement = null; // Store last focused element for accessibility
+
 // === 3. FUNCIONES DE UI Y ALERTA PERSONALIZADA ===
 
 // Reemplazo de alert() con un modal estilizado
 function showCustomAlert(message, title = "¡Notificación Warrior!") {
+  lastFocusedElement = document.activeElement; // Save focus
   modalTitle.textContent = title;
   modalMessage.innerHTML = message;
   customModal.classList.remove("hidden");
   customModal.classList.add("flex");
+
+  // Focus trap: Set focus to the first button in the modal
+  const modalBtn = customModal.querySelector("button");
+  if (modalBtn) {
+    modalBtn.focus();
+  }
+
+  // Add Escape key listener
+  document.addEventListener("keydown", handleModalKeydown);
 }
 
 function hideCustomAlert() {
   customModal.classList.add("hidden");
   customModal.classList.remove("flex");
+
+  // Restore focus
+  if (lastFocusedElement) {
+    lastFocusedElement.focus();
+    lastFocusedElement = null;
+  }
+
+  // Remove Escape key listener
+  document.removeEventListener("keydown", handleModalKeydown);
+}
+
+function handleModalKeydown(e) {
+  if (e.key === "Escape") {
+    hideCustomAlert();
+  }
 }
 
 // Show Paywall Modal
