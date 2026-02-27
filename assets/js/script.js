@@ -12,7 +12,7 @@ const gameState = {
 let gameMode = "demo"; // 'demo' or 'full'
 
 // === 2. REFERENCIAS Y MAPEO DE UI ===
-const levelSections = document.querySelectorAll(".level-section");
+let activeLevelSection = null; // Track current visible section for O(1) switching
 const mainTitle = document.getElementById("main-title");
 const insightCounter = document.getElementById("insight-counter");
 const chaosMetricDisplay = document.getElementById("chaos-metric-display");
@@ -149,14 +149,20 @@ function renderLevel(level) {
 
   gameState.currentLevel = level;
 
-  // Ocultar todos y mostrar el activo
-  levelSections.forEach((section) => {
-    section.classList.add("hidden");
-  });
+  // Optimization: Toggle visibility only on the active section (O(1)) instead of iterating all (O(N))
+  if (activeLevelSection) {
+    activeLevelSection.classList.add("hidden");
+  }
 
-  const activeSection = document.getElementById(`level-${level}`);
-  if (activeSection) {
-    activeSection.classList.remove("hidden");
+  const nextSection = document.getElementById(`level-${level}`);
+  if (nextSection) {
+    nextSection.classList.remove("hidden");
+    activeLevelSection = nextSection;
+  } else {
+    // Fallback if ID not found, though unlikely
+    console.warn(`Level section level-${level} not found`);
+    // Ensure we don't hold onto a stale reference if we can't find the new one?
+    // Or just keep the old one visible? Better to keep UI stable.
   }
 
   // Actualizar título y UI
