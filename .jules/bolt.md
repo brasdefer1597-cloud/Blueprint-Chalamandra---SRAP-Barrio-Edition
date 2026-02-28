@@ -7,3 +7,8 @@
 
 **Learning:** Frequent UI updates using `innerHTML` on static containers (like `#chaos-metric-display`) force unnecessary re-parsing and layout thrashing.
 **Action:** For high-frequency updates, use static HTML structures with specific ID targets (e.g., `<span id="metric-val">`) and update `textContent` and `className` directly. This preserves the DOM tree and improves rendering performance.
+
+## $(date +%Y-%m-%d) - [DOM Traversal Efficiency]
+
+**Learning:** Hiding UI sections by iterating over a static NodeList (like `levelSections`) is an O(N) operation.
+**Action:** When only one section is active at a time, track the active section in a state variable (`activeLevelSection`) to update visibility in O(1) time. This reduces unnecessary DOM operations, though the impact is most noticeable in interfaces with numerous dynamic sections.
