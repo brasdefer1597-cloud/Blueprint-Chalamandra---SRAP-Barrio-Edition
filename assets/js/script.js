@@ -40,19 +40,42 @@ const customModal = document.getElementById("custom-modal");
 const modalTitle = document.getElementById("modal-title");
 const modalMessage = document.getElementById("modal-message");
 
+let lastFocusedElement = null; // Store focus state before opening modal
+
 // === 3. FUNCIONES DE UI Y ALERTA PERSONALIZADA ===
 
 // Reemplazo de alert() con un modal estilizado
 function showCustomAlert(message, title = "¡Notificación Warrior!") {
+  // Capture the currently focused element
+  lastFocusedElement = document.activeElement;
+
   modalTitle.textContent = title;
   modalMessage.innerHTML = message;
   customModal.classList.remove("hidden");
   customModal.classList.add("flex");
+
+  // Update aria-hidden state
+  customModal.setAttribute("aria-hidden", "false");
+
+  // Focus the first button inside the modal to trap focus programmatically
+  const closeButton = customModal.querySelector(".cta-button");
+  if (closeButton) {
+    closeButton.focus();
+  }
 }
 
 function hideCustomAlert() {
   customModal.classList.add("hidden");
   customModal.classList.remove("flex");
+
+  // Update aria-hidden state
+  customModal.setAttribute("aria-hidden", "true");
+
+  // Restore focus to the element that was focused before the modal opened
+  if (lastFocusedElement) {
+    lastFocusedElement.focus();
+    lastFocusedElement = null;
+  }
 }
 
 // Show Paywall Modal

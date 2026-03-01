@@ -22,28 +22,28 @@
         <button
           id="nav-btn-0"
           onclick="renderLevel(0)"
-          class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12"
+          class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
         >
           HOME
         </button>
         <button
           id="nav-btn-2"
           onclick="renderLevel(2)"
-          class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12 nav-locked"
+          class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12 nav-locked focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
         >
           N. 2
         </button>
         <button
           id="nav-btn-3"
           onclick="renderLevel(3)"
-          class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12 nav-locked"
+          class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12 nav-locked focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
         >
           N. 3
         </button>
         <button
           id="nav-btn-5"
           onclick="renderLevel(5)"
-          class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12 nav-locked"
+          class="nav-level-button bg-gray-700 text-white p-2 rounded-lg text-xs font-bold w-12 nav-locked focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
         >
           N. 5
         </button>
@@ -100,7 +100,7 @@
 
         <button
           onclick="unlockAndRenderLevel(2)"
-          class="cta-button px-8 py-3 rounded-full text-base sm:text-lg tracking-wider"
+          class="cta-button px-8 py-3 rounded-full text-base sm:text-lg tracking-wider focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
         >
           ¡Vámonos pal Nivel 2 (SRAP)! 🚀
         </button>
@@ -120,7 +120,7 @@
         <div id="srap-steps-container" class="space-y-4">
           <div
             id="srap-scan"
-            class="srap-step p-4 rounded-r-lg"
+            class="srap-step p-4 rounded-r-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
             onclick="collectInsight(this, 'srap-scan', 1)"
           >
             <p class="srap-title text-xl font-bold text-neon-blue">
@@ -133,7 +133,7 @@
           </div>
           <div
             id="srap-respira"
-            class="srap-step p-4 rounded-r-lg"
+            class="srap-step p-4 rounded-r-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
             onclick="collectInsight(this, 'srap-respira', 1)"
           >
             <p class="srap-title text-xl font-bold text-neon-blue">
@@ -146,7 +146,7 @@
           </div>
           <div
             id="srap-alinea"
-            class="srap-step p-4 rounded-r-lg"
+            class="srap-step p-4 rounded-r-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
             onclick="collectInsight(this, 'srap-alinea', 2)"
           >
             <p class="srap-title text-xl font-bold text-neon-blue">
@@ -159,7 +159,7 @@
           </div>
           <div
             id="srap-pausa"
-            class="srap-step p-4 rounded-r-lg"
+            class="srap-step p-4 rounded-r-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
             onclick="collectInsight(this, 'srap-pausa', 1)"
           >
             <p class="srap-title text-xl font-bold text-neon-blue">
@@ -174,7 +174,7 @@
 
         <button
           onclick="unlockAndRenderLevel(3)"
-          class="cta-button mt-10 px-8 py-3 rounded-full text-base sm:text-lg tracking-wider"
+          class="cta-button mt-10 px-8 py-3 rounded-full text-base sm:text-lg tracking-wider focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
         >
           ¡Nivel 3: Caos Controlado! 🌪
         </button>
@@ -193,7 +193,7 @@
 
         <div id="chaos-rituals-container" class="space-y-4 text-left">
           <div
-            class="chaos-ritual p-4 rounded-xl"
+            class="chaos-ritual p-4 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
             onclick="startChaosRitual('error')"
           >
             <p class="chaos-title text-xl font-bold">
@@ -205,7 +205,7 @@
             </p>
           </div>
           <div
-            class="chaos-ritual p-4 rounded-xl"
+            class="chaos-ritual p-4 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
             onclick="startChaosRitual('fiesta')"
           >
             <p class="chaos-title text-xl font-bold">
@@ -237,7 +237,7 @@
 
         <button
           onclick="unlockAndRenderLevel(5)"
-          class="cta-button mt-10 px-8 py-3 rounded-full text-base sm:text-lg tracking-wider"
+          class="cta-button mt-10 px-8 py-3 rounded-full text-base sm:text-lg tracking-wider focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
         >
           ¡Nivel 5: Mandala Multiconsciente! 🎩
         </button>
@@ -258,7 +258,7 @@
         <div class="grid grid-cols-2 gap-4 text-left">
           <div
             id="hat-creativo"
-            class="mandala-hat p-4 rounded-xl"
+            class="mandala-hat p-4 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
             onclick="
               revealHatInsight(
                 this,
@@ -281,7 +281,7 @@
 
           <div
             id="hat-critico"
-            class="mandala-hat p-4 rounded-xl"
+            class="mandala-hat p-4 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
             onclick="
               revealHatInsight(
                 this,
@@ -304,7 +304,7 @@
 
           <div
             id="hat-tactico"
-            class="mandala-hat p-4 rounded-xl"
+            class="mandala-hat p-4 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
             onclick="
               revealHatInsight(
                 this,
@@ -327,7 +327,7 @@
 
           <div
             id="hat-fresa"
-            class="mandala-hat p-4 rounded-xl"
+            class="mandala-hat p-4 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
             onclick="
               revealHatInsight(
                 this,
@@ -353,7 +353,7 @@
               '¡Felicidades Warrior! Has completado el entrenamiento completo del Blueprint Chalamandra. ¡Nos vemos en el Caos!',
             )
           "
-          class="cta-button mt-10 px-8 py-3 rounded-full text-base sm:text-lg tracking-wider"
+          class="cta-button mt-10 px-8 py-3 rounded-full text-base sm:text-lg tracking-wider focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
         >
           ¡Finalizar Entrenamiento Completo! 🏆
         </button>
@@ -364,6 +364,11 @@
     <div
       id="custom-modal"
       class="fixed inset-0 hidden items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="modal-title"
+      aria-describedby="modal-message"
     >
       <div
         id="modal-content"
@@ -375,7 +380,7 @@
         <p id="modal-message" class="text-white mb-6 text-base"></p>
         <button
           onclick="hideCustomAlert()"
-          class="cta-button px-6 py-2 rounded-full text-sm"
+          class="cta-button px-6 py-2 rounded-full text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400"
         >
           Entendido, Carnal
         </button>
