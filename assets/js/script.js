@@ -12,7 +12,7 @@ const gameState = {
 let gameMode = "demo"; // 'demo' or 'full'
 
 // === 2. REFERENCIAS Y MAPEO DE UI ===
-const levelSections = document.querySelectorAll(".level-section");
+let activeLevelSection = null; // Optimization: Track the active section to avoid O(N) DOM queries
 const mainTitle = document.getElementById("main-title");
 const insightCounter = document.getElementById("insight-counter");
 const chaosMetricDisplay = document.getElementById("chaos-metric-display");
@@ -149,14 +149,16 @@ function renderLevel(level) {
 
   gameState.currentLevel = level;
 
-  // Ocultar todos y mostrar el activo
-  levelSections.forEach((section) => {
-    section.classList.add("hidden");
-  });
+  // Optimization: O(1) DOM update instead of O(N) iteration
+  // Hide only the currently active section instead of all sections
+  if (activeLevelSection) {
+    activeLevelSection.classList.add("hidden");
+  }
 
-  const activeSection = document.getElementById(`level-${level}`);
-  if (activeSection) {
-    activeSection.classList.remove("hidden");
+  const newActiveSection = document.getElementById(`level-${level}`);
+  if (newActiveSection) {
+    newActiveSection.classList.remove("hidden");
+    activeLevelSection = newActiveSection; // Update reference
   }
 
   // Actualizar título y UI
