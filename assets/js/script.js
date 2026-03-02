@@ -40,19 +40,37 @@ const customModal = document.getElementById("custom-modal");
 const modalTitle = document.getElementById("modal-title");
 const modalMessage = document.getElementById("modal-message");
 
+let lastFocusedElement = null;
+
 // === 3. FUNCIONES DE UI Y ALERTA PERSONALIZADA ===
 
 // Reemplazo de alert() con un modal estilizado
 function showCustomAlert(message, title = "¡Notificación Warrior!") {
+  lastFocusedElement = document.activeElement;
   modalTitle.textContent = title;
   modalMessage.innerHTML = message;
   customModal.classList.remove("hidden");
   customModal.classList.add("flex");
+  customModal.setAttribute("aria-hidden", "false");
+
+  // Focus the first focusable element inside the modal (usually the button)
+  const focusableElements = customModal.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+  );
+  if (focusableElements.length > 0) {
+    // Focus the first one
+    focusableElements[0].focus();
+  }
 }
 
 function hideCustomAlert() {
   customModal.classList.add("hidden");
   customModal.classList.remove("flex");
+  customModal.setAttribute("aria-hidden", "true");
+  if (lastFocusedElement) {
+    lastFocusedElement.focus();
+    lastFocusedElement = null;
+  }
 }
 
 // Show Paywall Modal
@@ -61,7 +79,7 @@ function showPaywallModal() {
   const message = `
     <p class="mb-4">¡Alto ahí, Warrior! Has dominado la Demo.</p>
     <p class="mb-4">Para acceder al <strong>Caos Controlado (Nivel 3)</strong> y al <strong>Mandala Multiconsciente (Nivel 5)</strong>, necesitas la versión completa.</p>
-    <a href="${kofiUrl}" target="_blank" class="cta-button px-6 py-3 rounded-full text-base font-bold inline-block mt-2 text-black hover:text-black">
+    <a href="${kofiUrl}" target="_blank" class="cta-button px-6 py-3 rounded-full text-base font-bold inline-block mt-2 text-black hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400">
       🔓 Desbloquear Premium
     </a>
     <p class="text-xs text-gray-400 mt-4">Acceso inmediato tras el pago.</p>
@@ -327,6 +345,20 @@ function enhanceAccessibility() {
   document.querySelectorAll(selectorString).forEach((element) => {
     element.setAttribute("role", "button");
     element.setAttribute("tabindex", "0");
+    element.classList.add(
+      "focus-visible:outline-none",
+      "focus-visible:ring-2",
+      "focus-visible:ring-lime-400",
+    );
+  });
+
+  // Add standard focus visible to all generic buttons
+  document.querySelectorAll("button").forEach((btn) => {
+    btn.classList.add(
+      "focus-visible:outline-none",
+      "focus-visible:ring-2",
+      "focus-visible:ring-lime-400",
+    );
   });
 
   // Single delegated listener for keyboard support (Enter/Space)
