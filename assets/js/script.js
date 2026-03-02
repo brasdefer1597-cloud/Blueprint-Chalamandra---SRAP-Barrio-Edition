@@ -256,14 +256,17 @@ function startChaosRitual(ritualType) {
 
 // Función para verificar la sinergia del Mandala (Creativo -> Crítico -> Táctico)
 function checkMandalaSynergy() {
-  const requiredSequence = ["creativo", "critico", "tactico"];
+  const len = gameState.hatSequence.length;
 
-  // Chequea si la secuencia actual contiene la requerida
-  if (gameState.hatSequence.length >= 3) {
-    const lastThree = gameState.hatSequence.slice(-3); // Get the last 3 activated hats
-
-    // Check if the last three match the required pattern
-    if (JSON.stringify(lastThree) === JSON.stringify(requiredSequence)) {
+  // Optimization: Chequea si la secuencia actual contiene la requerida usando O(1) index access
+  // Avoids O(N) array allocation from slice(-3) and expensive O(N) JSON serialization
+  if (len >= 3) {
+    // Check if the last three match the required pattern "creativo" -> "critico" -> "tactico"
+    if (
+      gameState.hatSequence[len - 3] === "creativo" &&
+      gameState.hatSequence[len - 2] === "critico" &&
+      gameState.hatSequence[len - 1] === "tactico"
+    ) {
       // Synergy achieved! Reset sequence and grant bonus
       const bonus = 10;
       gameState.insightPoints += bonus;
