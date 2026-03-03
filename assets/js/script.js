@@ -39,20 +39,29 @@ const levelTitles = {
 const customModal = document.getElementById("custom-modal");
 const modalTitle = document.getElementById("modal-title");
 const modalMessage = document.getElementById("modal-message");
+let lastFocusedElement = null;
 
 // === 3. FUNCIONES DE UI Y ALERTA PERSONALIZADA ===
 
 // Reemplazo de alert() con un modal estilizado
 function showCustomAlert(message, title = "¡Notificación Warrior!") {
+  lastFocusedElement = document.activeElement;
   modalTitle.textContent = title;
   modalMessage.innerHTML = message;
+  customModal.setAttribute("aria-hidden", "false");
   customModal.classList.remove("hidden");
   customModal.classList.add("flex");
+  const btn = customModal.querySelector("button");
+  if (btn) btn.focus();
 }
 
 function hideCustomAlert() {
+  customModal.setAttribute("aria-hidden", "true");
   customModal.classList.add("hidden");
   customModal.classList.remove("flex");
+  if (lastFocusedElement) {
+    lastFocusedElement.focus();
+  }
 }
 
 // Show Paywall Modal
@@ -319,6 +328,15 @@ function revealHatInsight(element, hatType, insightText) {
 // === 6. ACCESIBILIDAD ===
 // Mejora la accesibilidad de elementos interactivos personalizados
 function enhanceAccessibility() {
+  // Add ARIA attributes to modal
+  if (customModal) {
+    customModal.setAttribute("role", "dialog");
+    customModal.setAttribute("aria-modal", "true");
+    customModal.setAttribute("aria-labelledby", "modal-title");
+    customModal.setAttribute("aria-describedby", "modal-message");
+    customModal.setAttribute("aria-hidden", "true");
+  }
+
   // Optimization: Use event delegation to reduce event listeners from N to 1 and improve memory usage.
   const interactiveSelectors = [".srap-step", ".chaos-ritual", ".mandala-hat"];
   const selectorString = interactiveSelectors.join(", ");
@@ -327,6 +345,12 @@ function enhanceAccessibility() {
   document.querySelectorAll(selectorString).forEach((element) => {
     element.setAttribute("role", "button");
     element.setAttribute("tabindex", "0");
+    // Add visual focus states for keyboard navigation
+    element.classList.add(
+      "focus-visible:ring-2",
+      "focus-visible:ring-lime-400",
+      "focus-visible:outline-none",
+    );
   });
 
   // Single delegated listener for keyboard support (Enter/Space)
