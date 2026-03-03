@@ -42,10 +42,43 @@ const modalMessage = document.getElementById("modal-message");
 
 // === 3. FUNCIONES DE UI Y ALERTA PERSONALIZADA ===
 
+// 🛡️ SECURITY: Basic HTML sanitizer to prevent XSS when using innerHTML
+function sanitizeHTML(html) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+
+  // Remove dangerous tags entirely
+  const dangerousTags = doc.querySelectorAll(
+    "script, iframe, object, embed, base, form, math, svg",
+  );
+  dangerousTags.forEach((el) => el.remove());
+
+  const allElements = doc.querySelectorAll("*");
+  allElements.forEach((el) => {
+    for (let i = el.attributes.length - 1; i >= 0; i--) {
+      const attr = el.attributes[i];
+      const name = attr.name.toLowerCase();
+      const value = attr.value.trim().toLowerCase();
+
+      // Remove event handlers, execution attributes, and dangerous URIs
+      if (
+        name.startsWith("on") ||
+        name === "srcdoc" ||
+        value.startsWith("javascript:") ||
+        value.startsWith("data:") ||
+        value.startsWith("vbscript:")
+      ) {
+        el.removeAttribute(attr.name);
+      }
+    }
+  });
+  return doc.body.innerHTML;
+}
+
 // Reemplazo de alert() con un modal estilizado
 function showCustomAlert(message, title = "¡Notificación Warrior!") {
   modalTitle.textContent = title;
-  modalMessage.innerHTML = message;
+  // 🛡️ SECURITY: Sanitizing input before assigning to innerHTML to prevent XSS
+  modalMessage.innerHTML = sanitizeHTML(message);
   customModal.classList.remove("hidden");
   customModal.classList.add("flex");
 }
