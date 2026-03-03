@@ -71,7 +71,10 @@ function showPaywallModal() {
 
 // Actualiza el contador global y la métrica de caos
 function updateUI() {
-  insightCounter.textContent = gameState.insightPoints;
+  // Optimization: Dirty checking to prevent redundant DOM assignments and reflows
+  if (insightCounter.textContent !== String(gameState.insightPoints)) {
+    insightCounter.textContent = String(gameState.insightPoints);
+  }
 
   // Lógica de la Métrica de Desmadre/Caos (Premium)
   // Esto es una medida de cuánto caos has generado vs. cuánto Insight tienes.
@@ -82,33 +85,49 @@ function updateUI() {
   const flowControl =
     totalActivity > 0
       ? (gameState.insightPoints / totalActivity).toFixed(2)
-      : 0;
+      : "0.00";
 
-  metricDisaster.textContent = gameState.epicDisasterLevel;
-  metricFlow.textContent = flowControl;
-  metricFlow.className =
+  if (metricDisaster.textContent !== String(gameState.epicDisasterLevel)) {
+    metricDisaster.textContent = String(gameState.epicDisasterLevel);
+  }
+
+  if (metricFlow.textContent !== String(flowControl)) {
+    metricFlow.textContent = String(flowControl);
+  }
+
+  const expectedFlowClass =
     flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+  if (metricFlow.className !== expectedFlowClass) {
+    metricFlow.className = expectedFlowClass;
+  }
 
   // Refrescar estado de los pasos SRAP
   srapSteps.forEach((step) => {
     const stepId = step.id;
-    if (gameState.collectedSteps[stepId]) {
+    const isCollected = gameState.collectedSteps[stepId];
+
+    // Check class list before modifying
+    if (isCollected && !step.classList.contains("srap-active")) {
       step.classList.add("srap-active");
-      step.style.cursor = "default";
-    } else {
+    } else if (!isCollected && step.classList.contains("srap-active")) {
       step.classList.remove("srap-active");
-      step.style.cursor = "pointer";
+    }
+
+    // Check style before modifying
+    const expectedCursor = isCollected ? "default" : "pointer";
+    if (step.style.cursor !== expectedCursor) {
+      step.style.cursor = expectedCursor;
     }
   });
 
   // Refrescar estado de los sombreros
   mandalaHats.forEach((hat) => {
     const hatType = hat.id.replace("hat-", "");
-    if (gameState.collectedHats[hatType]) {
-      // Si ya está activo, permitimos que el usuario lo active/desactive visualmente
-      hat.style.borderColor = "var(--neon-lime)";
-    } else {
-      hat.style.borderColor = "var(--neon-purple)";
+    const expectedBorderColor = gameState.collectedHats[hatType]
+      ? "var(--neon-lime)"
+      : "var(--neon-purple)";
+    if (hat.style.borderColor !== expectedBorderColor) {
+      hat.style.borderColor = expectedBorderColor;
     }
   });
 
@@ -116,13 +135,28 @@ function updateUI() {
   Object.keys(gameState.unlockedLevels).forEach((level) => {
     const btn = navButtons[level];
     const isLocked = !gameState.unlockedLevels[level];
+    const isActive = parseInt(level) === gameState.currentLevel;
+
     if (btn) {
-      btn.classList.toggle("nav-locked", isLocked);
-      btn.classList.toggle(
-        "nav-active",
-        parseInt(level) === gameState.currentLevel,
-      );
-      btn.disabled = isLocked;
+      if (btn.classList.contains("nav-locked") !== isLocked) {
+        if (isLocked) {
+          btn.classList.add("nav-locked");
+        } else {
+          btn.classList.remove("nav-locked");
+        }
+      }
+
+      if (btn.classList.contains("nav-active") !== isActive) {
+        if (isActive) {
+          btn.classList.add("nav-active");
+        } else {
+          btn.classList.remove("nav-active");
+        }
+      }
+
+      if (btn.disabled !== isLocked) {
+        btn.disabled = isLocked;
+      }
     }
   });
 }
