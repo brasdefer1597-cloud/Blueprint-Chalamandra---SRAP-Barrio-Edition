@@ -71,7 +71,11 @@ function showPaywallModal() {
 
 // Actualiza el contador global y la métrica de caos
 function updateUI() {
-  insightCounter.textContent = gameState.insightPoints;
+  // Optimization: Dirty checking to prevent redundant DOM reflows
+  // Actualiza el contador global y la métrica de caos
+  if (insightCounter.textContent !== String(gameState.insightPoints)) {
+    insightCounter.textContent = gameState.insightPoints;
+  }
 
   // Lógica de la Métrica de Desmadre/Caos (Premium)
   // Esto es una medida de cuánto caos has generado vs. cuánto Insight tienes.
@@ -84,20 +88,28 @@ function updateUI() {
       ? (gameState.insightPoints / totalActivity).toFixed(2)
       : 0;
 
-  metricDisaster.textContent = gameState.epicDisasterLevel;
-  metricFlow.textContent = flowControl;
-  metricFlow.className =
-    flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+  if (metricDisaster.textContent !== String(gameState.epicDisasterLevel)) {
+    metricDisaster.textContent = gameState.epicDisasterLevel;
+  }
+
+  if (metricFlow.textContent !== String(flowControl)) {
+    metricFlow.textContent = flowControl;
+  }
+
+  const newFlowClass = flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+  if (metricFlow.className !== newFlowClass) {
+    metricFlow.className = newFlowClass;
+  }
 
   // Refrescar estado de los pasos SRAP
   srapSteps.forEach((step) => {
     const stepId = step.id;
     if (gameState.collectedSteps[stepId]) {
       step.classList.add("srap-active");
-      step.style.cursor = "default";
+      if (step.style.cursor !== "default") step.style.cursor = "default";
     } else {
       step.classList.remove("srap-active");
-      step.style.cursor = "pointer";
+      if (step.style.cursor !== "pointer") step.style.cursor = "pointer";
     }
   });
 
@@ -106,9 +118,9 @@ function updateUI() {
     const hatType = hat.id.replace("hat-", "");
     if (gameState.collectedHats[hatType]) {
       // Si ya está activo, permitimos que el usuario lo active/desactive visualmente
-      hat.style.borderColor = "var(--neon-lime)";
+      if (hat.style.borderColor !== "var(--neon-lime)") hat.style.borderColor = "var(--neon-lime)";
     } else {
-      hat.style.borderColor = "var(--neon-purple)";
+      if (hat.style.borderColor !== "var(--neon-purple)") hat.style.borderColor = "var(--neon-purple)";
     }
   });
 
@@ -122,7 +134,7 @@ function updateUI() {
         "nav-active",
         parseInt(level) === gameState.currentLevel,
       );
-      btn.disabled = isLocked;
+      if (btn.disabled !== isLocked) btn.disabled = isLocked;
     }
   });
 }
