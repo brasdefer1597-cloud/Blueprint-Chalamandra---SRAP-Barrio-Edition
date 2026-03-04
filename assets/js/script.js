@@ -374,6 +374,11 @@ function enhanceAccessibility() {
   document.querySelectorAll(selectorString).forEach((element) => {
     element.setAttribute("role", "button");
     element.setAttribute("tabindex", "0");
+    element.classList.add(
+      "focus-visible:outline-none",
+      "focus-visible:ring-2",
+      "focus-visible:ring-lime-400",
+    );
   });
 
   // Single delegated listener for keyboard support (Enter/Space)
