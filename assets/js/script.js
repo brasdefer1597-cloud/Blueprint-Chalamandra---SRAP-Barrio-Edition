@@ -105,7 +105,10 @@ function showPaywallModal() {
 // === OPTIMIZATION: GRANULAR UPDATE FUNCTIONS ===
 
 function updateScores() {
-  insightCounter.textContent = gameState.insightPoints;
+  // Optimization: Dirty checking to prevent redundant DOM assignments and reflows
+  if (String(gameState.insightPoints) !== insightCounter.textContent) {
+    insightCounter.textContent = gameState.insightPoints;
+  }
 
   // Lógica de la Métrica de Desmadre/Caos (Premium)
   const totalActivity =
@@ -117,10 +120,18 @@ function updateScores() {
       ? (gameState.insightPoints / totalActivity).toFixed(2)
       : 0;
 
-  metricDisaster.textContent = gameState.epicDisasterLevel;
-  metricFlow.textContent = flowControl;
-  metricFlow.className =
-    flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+  if (String(gameState.epicDisasterLevel) !== metricDisaster.textContent) {
+    metricDisaster.textContent = gameState.epicDisasterLevel;
+  }
+
+  if (String(flowControl) !== metricFlow.textContent) {
+    metricFlow.textContent = flowControl;
+  }
+
+  const newFlowClass = flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+  if (newFlowClass !== metricFlow.className) {
+    metricFlow.className = newFlowClass;
+  }
 }
 
 function updateNavigation() {
