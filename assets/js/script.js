@@ -134,6 +134,8 @@ function updateNavigation() {
         parseInt(level) === gameState.currentLevel,
       );
       btn.disabled = isLocked;
+      // Provide explicit semantic state for screen readers
+      btn.setAttribute("aria-disabled", isLocked.toString());
     }
   });
 }
@@ -374,6 +376,13 @@ function enhanceAccessibility() {
   document.querySelectorAll(selectorString).forEach((element) => {
     element.setAttribute("role", "button");
     element.setAttribute("tabindex", "0");
+    // Add focus-visible styles for keyboard accessibility
+    element.classList.add(
+      "focus-visible:ring-2",
+      "focus-visible:ring-lime-400",
+      "focus-visible:outline-none",
+      "rounded-lg",
+    );
   });
 
   // Single delegated listener for keyboard support (Enter/Space)
