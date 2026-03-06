@@ -105,7 +105,11 @@ function showPaywallModal() {
 // === OPTIMIZATION: GRANULAR UPDATE FUNCTIONS ===
 
 function updateScores() {
-  insightCounter.textContent = gameState.insightPoints;
+  // Dirty checking for insightCounter text
+  const insightStr = String(gameState.insightPoints);
+  if (insightCounter.textContent !== insightStr) {
+    insightCounter.textContent = insightStr;
+  }
 
   // Lógica de la Métrica de Desmadre/Caos (Premium)
   const totalActivity =
@@ -117,23 +121,41 @@ function updateScores() {
       ? (gameState.insightPoints / totalActivity).toFixed(2)
       : 0;
 
-  metricDisaster.textContent = gameState.epicDisasterLevel;
-  metricFlow.textContent = flowControl;
-  metricFlow.className =
-    flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+  // Dirty checking for metricDisaster text
+  const disasterStr = String(gameState.epicDisasterLevel);
+  if (metricDisaster.textContent !== disasterStr) {
+    metricDisaster.textContent = disasterStr;
+  }
+
+  // Dirty checking for metricFlow text
+  const flowStr = String(flowControl);
+  if (metricFlow.textContent !== flowStr) {
+    metricFlow.textContent = flowStr;
+  }
+
+  // Dirty checking for metricFlow class
+  const newFlowClass = flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+  if (metricFlow.className !== newFlowClass) {
+    metricFlow.className = newFlowClass;
+  }
 }
 
 function updateNavigation() {
   Object.keys(gameState.unlockedLevels).forEach((level) => {
     const btn = navButtons[level];
     const isLocked = !gameState.unlockedLevels[level];
+    const isCurrentLevel = parseInt(level) === gameState.currentLevel;
+
     if (btn) {
-      btn.classList.toggle("nav-locked", isLocked);
-      btn.classList.toggle(
-        "nav-active",
-        parseInt(level) === gameState.currentLevel,
-      );
-      btn.disabled = isLocked;
+      if (btn.classList.contains("nav-locked") !== isLocked) {
+        btn.classList.toggle("nav-locked", isLocked);
+      }
+      if (btn.classList.contains("nav-active") !== isCurrentLevel) {
+        btn.classList.toggle("nav-active", isCurrentLevel);
+      }
+      if (btn.disabled !== isLocked) {
+        btn.disabled = isLocked;
+      }
     }
   });
 }
