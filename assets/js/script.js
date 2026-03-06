@@ -94,7 +94,7 @@ function showPaywallModal() {
   const message = `
     <p class="mb-4">¡Alto ahí, Warrior! Has dominado la Demo.</p>
     <p class="mb-4">Para acceder al <strong>Caos Controlado (Nivel 3)</strong> y al <strong>Mandala Multiconsciente (Nivel 5)</strong>, necesitas la versión completa.</p>
-    <a href="${kofiUrl}" target="_blank" class="cta-button px-6 py-3 rounded-full text-base font-bold inline-block mt-2 text-black hover:text-black">
+    <a href="${kofiUrl}" target="_blank" class="cta-button px-6 py-3 rounded-full text-base font-bold inline-block mt-2 text-black hover:text-black focus-visible:ring-2 focus-visible:ring-lime-400 focus-visible:outline-none">
       🔓 Desbloquear Premium
     </a>
     <p class="text-xs text-gray-400 mt-4">Acceso inmediato tras el pago.</p>
@@ -374,6 +374,19 @@ function enhanceAccessibility() {
   document.querySelectorAll(selectorString).forEach((element) => {
     element.setAttribute("role", "button");
     element.setAttribute("tabindex", "0");
+  });
+
+  // Add focus-visible utilities to all interactive elements for keyboard navigation
+  const focusClasses = [
+    "focus-visible:ring-2",
+    "focus-visible:ring-lime-400",
+    "focus-visible:outline-none",
+  ];
+  const allInteractive = document.querySelectorAll(
+    `button, a, ${selectorString}`,
+  );
+  allInteractive.forEach((el) => {
+    el.classList.add(...focusClasses);
   });
 
   // Single delegated listener for keyboard support (Enter/Space)
