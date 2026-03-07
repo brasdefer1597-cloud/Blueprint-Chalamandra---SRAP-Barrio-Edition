@@ -104,8 +104,19 @@ function showPaywallModal() {
 
 // === OPTIMIZATION: GRANULAR UPDATE FUNCTIONS ===
 
+// Cache JS-level para evitar actualizaciones innecesarias del DOM (dirty checking)
+const lastRenderedState = {
+  insightPoints: null,
+  epicDisasterLevel: null,
+  flowControl: null,
+  flowClass: null,
+};
+
 function updateScores() {
-  insightCounter.textContent = gameState.insightPoints;
+  if (lastRenderedState.insightPoints !== gameState.insightPoints) {
+    insightCounter.textContent = gameState.insightPoints;
+    lastRenderedState.insightPoints = gameState.insightPoints;
+  }
 
   // Lógica de la Métrica de Desmadre/Caos (Premium)
   const totalActivity =
@@ -117,10 +128,21 @@ function updateScores() {
       ? (gameState.insightPoints / totalActivity).toFixed(2)
       : 0;
 
-  metricDisaster.textContent = gameState.epicDisasterLevel;
-  metricFlow.textContent = flowControl;
-  metricFlow.className =
-    flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+  if (lastRenderedState.epicDisasterLevel !== gameState.epicDisasterLevel) {
+    metricDisaster.textContent = gameState.epicDisasterLevel;
+    lastRenderedState.epicDisasterLevel = gameState.epicDisasterLevel;
+  }
+
+  if (lastRenderedState.flowControl !== flowControl) {
+    metricFlow.textContent = flowControl;
+    lastRenderedState.flowControl = flowControl;
+  }
+
+  const newFlowClass = flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+  if (lastRenderedState.flowClass !== newFlowClass) {
+    metricFlow.className = newFlowClass;
+    lastRenderedState.flowClass = newFlowClass;
+  }
 }
 
 function updateNavigation() {
