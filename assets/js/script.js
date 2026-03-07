@@ -374,6 +374,23 @@ function enhanceAccessibility() {
   document.querySelectorAll(selectorString).forEach((element) => {
     element.setAttribute("role", "button");
     element.setAttribute("tabindex", "0");
+    // Add focus visible styles for keyboard navigation
+    element.classList.add(
+      "focus-visible:ring-2",
+      "focus-visible:ring-lime-400",
+      "focus-visible:outline-none",
+    );
+  });
+
+  // Also add focus styles to all buttons that don't already have specific focus logic
+  document.querySelectorAll("button").forEach((btn) => {
+    btn.classList.add(
+      "focus-visible:ring-2",
+      "focus-visible:ring-lime-400",
+      "focus-visible:outline-none",
+      "focus-visible:ring-offset-2",
+      "focus-visible:ring-offset-gray-900",
+    );
   });
 
   // Single delegated listener for keyboard support (Enter/Space)
