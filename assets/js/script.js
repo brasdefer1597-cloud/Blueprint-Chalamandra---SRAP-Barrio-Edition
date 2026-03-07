@@ -104,8 +104,18 @@ function showPaywallModal() {
 
 // === OPTIMIZATION: GRANULAR UPDATE FUNCTIONS ===
 
+// Optimization: dirty checking cache to prevent redundant DOM assignments
+const lastRenderedState = {
+  insightPoints: null,
+  epicDisasterLevel: null,
+  flowControl: null,
+};
+
 function updateScores() {
-  insightCounter.textContent = gameState.insightPoints;
+  if (lastRenderedState.insightPoints !== gameState.insightPoints) {
+    insightCounter.textContent = gameState.insightPoints;
+    lastRenderedState.insightPoints = gameState.insightPoints;
+  }
 
   // Lógica de la Métrica de Desmadre/Caos (Premium)
   const totalActivity =
@@ -117,10 +127,17 @@ function updateScores() {
       ? (gameState.insightPoints / totalActivity).toFixed(2)
       : 0;
 
-  metricDisaster.textContent = gameState.epicDisasterLevel;
-  metricFlow.textContent = flowControl;
-  metricFlow.className =
-    flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+  if (lastRenderedState.epicDisasterLevel !== gameState.epicDisasterLevel) {
+    metricDisaster.textContent = gameState.epicDisasterLevel;
+    lastRenderedState.epicDisasterLevel = gameState.epicDisasterLevel;
+  }
+
+  if (lastRenderedState.flowControl !== flowControl) {
+    metricFlow.textContent = flowControl;
+    metricFlow.className =
+      flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+    lastRenderedState.flowControl = flowControl;
+  }
 }
 
 function updateNavigation() {
