@@ -367,13 +367,25 @@ function revealHatInsight(element, hatType, insightText) {
 // Mejora la accesibilidad de elementos interactivos personalizados
 function enhanceAccessibility() {
   // Optimization: Use event delegation to reduce event listeners from N to 1 and improve memory usage.
-  const interactiveSelectors = [".srap-step", ".chaos-ritual", ".mandala-hat"];
+  const interactiveSelectors = [
+    ".srap-step",
+    ".chaos-ritual",
+    ".mandala-hat",
+    ".cta-button",
+    ".nav-level-button",
+  ];
   const selectorString = interactiveSelectors.join(", ");
 
   // Set attributes for accessibility on all elements
   document.querySelectorAll(selectorString).forEach((element) => {
     element.setAttribute("role", "button");
     element.setAttribute("tabindex", "0");
+    // UX Enhancement: Add focus-visible styles for keyboard navigation
+    element.classList.add(
+      "focus-visible:outline-none",
+      "focus-visible:ring-2",
+      "focus-visible:ring-lime-400",
+    );
   });
 
   // Single delegated listener for keyboard support (Enter/Space)
