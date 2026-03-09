@@ -19,6 +19,14 @@ const chaosMetricDisplay = document.getElementById("chaos-metric-display");
 const metricDisaster = document.getElementById("metric-disaster");
 const metricFlow = document.getElementById("metric-flow");
 
+// Optimization: Dirty checking cache to prevent redundant DOM assignments
+const lastRenderedState = {
+  insightPoints: null,
+  epicDisasterLevel: null,
+  flowControl: null,
+  flowControlClassName: null,
+};
+
 // Optimization: Cache frequently accessed DOM elements to prevent layout thrashing
 const srapSteps = document.querySelectorAll(".srap-step");
 const mandalaHats = document.querySelectorAll(".mandala-hat");
@@ -105,7 +113,11 @@ function showPaywallModal() {
 // === OPTIMIZATION: GRANULAR UPDATE FUNCTIONS ===
 
 function updateScores() {
-  insightCounter.textContent = gameState.insightPoints;
+  // Optimization: Dirty checking to avoid redundant DOM updates
+  if (lastRenderedState.insightPoints !== gameState.insightPoints) {
+    insightCounter.textContent = gameState.insightPoints;
+    lastRenderedState.insightPoints = gameState.insightPoints;
+  }
 
   // Lógica de la Métrica de Desmadre/Caos (Premium)
   const totalActivity =
@@ -117,10 +129,22 @@ function updateScores() {
       ? (gameState.insightPoints / totalActivity).toFixed(2)
       : 0;
 
-  metricDisaster.textContent = gameState.epicDisasterLevel;
-  metricFlow.textContent = flowControl;
-  metricFlow.className =
+  if (lastRenderedState.epicDisasterLevel !== gameState.epicDisasterLevel) {
+    metricDisaster.textContent = gameState.epicDisasterLevel;
+    lastRenderedState.epicDisasterLevel = gameState.epicDisasterLevel;
+  }
+
+  if (lastRenderedState.flowControl !== flowControl) {
+    metricFlow.textContent = flowControl;
+    lastRenderedState.flowControl = flowControl;
+  }
+
+  const newFlowControlClassName =
     flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+  if (lastRenderedState.flowControlClassName !== newFlowControlClassName) {
+    metricFlow.className = newFlowControlClassName;
+    lastRenderedState.flowControlClassName = newFlowControlClassName;
+  }
 }
 
 function updateNavigation() {
