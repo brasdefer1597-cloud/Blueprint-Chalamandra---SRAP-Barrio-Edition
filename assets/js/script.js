@@ -57,7 +57,8 @@ function sanitizeHTML(html) {
     for (let i = el.attributes.length - 1; i >= 0; i--) {
       const attr = el.attributes[i];
       const name = attr.name.toLowerCase();
-      const value = attr.value.trim().toLowerCase();
+      // Strip control characters to prevent evasion (e.g., java\tscript)
+      const value = attr.value.replace(/[\x00-\x20]/g, "").toLowerCase();
 
       // Remove event handlers, execution attributes, and dangerous URIs
       if (
