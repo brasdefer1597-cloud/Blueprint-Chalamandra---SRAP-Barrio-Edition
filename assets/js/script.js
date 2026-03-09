@@ -376,6 +376,25 @@ function enhanceAccessibility() {
     element.setAttribute("tabindex", "0");
   });
 
+  // Standardize focus visibility across all interactive elements including standard buttons
+  const allInteractive = [
+    ".srap-step",
+    ".chaos-ritual",
+    ".mandala-hat",
+    ".cta-button",
+    ".nav-level-button",
+  ].join(", ");
+  document.querySelectorAll(allInteractive).forEach((element) => {
+    // Add Tailwind classes for clear, consistent focus outlines
+    element.classList.add(
+      "focus-visible:outline-none",
+      "focus-visible:ring-2",
+      "focus-visible:ring-lime-400",
+      "focus-visible:ring-offset-2",
+      "focus-visible:ring-offset-gray-900",
+    );
+  });
+
   // Single delegated listener for keyboard support (Enter/Space)
   document.body.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") {
