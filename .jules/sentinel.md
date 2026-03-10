@@ -1,0 +1,4 @@
+## 2024-05-18 - XSS Bypass via Control Characters in Custom Sanitizer
+**Vulnerability:** The custom `sanitizeHTML` function used `trim()` on attribute values before checking for malicious protocols (`javascript:`, `data:`). This allowed XSS bypasses using embedded control characters, e.g., `java\x09script:alert(1)` (tab character) or `javascript :alert(1)` (spaces inside the protocol).
+**Learning:** `trim()` only removes whitespace from the beginning and end of a string. Browsers ignore many control characters (like tabs, newlines, and certain spaces) even within the middle of a URL protocol when executing it. A custom sanitizer must aggressively strip these before validation.
+**Prevention:** Always use regex `/[\x00-\x20]/g` to remove ALL control characters and spaces from the attribute value string *before* evaluating if it starts with a dangerous protocol prefix. Also, ensure `vbscript:` is included in the blacklist alongside `javascript:` and `data:`.
