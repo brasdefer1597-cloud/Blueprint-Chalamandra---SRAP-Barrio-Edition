@@ -59,11 +59,24 @@ const customModal = document.getElementById("custom-modal");
 const modalTitle = document.getElementById("modal-title");
 const modalMessage = document.getElementById("modal-message");
 
+// Optimization: Cache previously rendered state to avoid redundant DOM updates
+const lastRenderedState = {
+  insightPoints: null,
+  epicDisasterLevel: null,
+  flowControl: null,
+  unlockedLevels: {},
+  currentLevel: null,
+  collectedSteps: {},
+  collectedHats: {},
+};
+
 // === 3. FUNCIONES DE UI Y ALERTA PERSONALIZADA ===
 
 function sanitizeHTML(html) {
   const doc = new DOMParser().parseFromString(html, "text/html");
-  const dangerousTags = doc.querySelectorAll("script, iframe, object, embed, base, form, math, svg");
+  const dangerousTags = doc.querySelectorAll(
+    "script, iframe, object, embed, base, form, math, svg",
+  );
   dangerousTags.forEach((el) => el.remove());
   const allElements = doc.querySelectorAll("*");
   allElements.forEach((el) => {
@@ -71,7 +84,12 @@ function sanitizeHTML(html) {
       const attr = el.attributes[i];
       const name = attr.name.toLowerCase();
       const value = attr.value.trim().toLowerCase();
-      if (name.startsWith("on") || name === "srcdoc" || value.startsWith("javascript:") || value.startsWith("data:")) {
+      if (
+        name.startsWith("on") ||
+        name === "srcdoc" ||
+        value.startsWith("javascript:") ||
+        value.startsWith("data:")
+      ) {
         el.removeAttribute(attr.name);
       }
     }
@@ -105,13 +123,30 @@ function showPaywallModal() {
 }
 
 function updateScores() {
-  insightCounter.textContent = gameState.insightPoints;
-  const totalActivity = Object.keys(gameState.collectedSteps).length + gameState.epicDisasterLevel + Object.keys(gameState.collectedHats).length;
-  const flowControl = totalActivity > 0 ? (gameState.insightPoints / totalActivity).toFixed(2) : 0;
-  if (metricDisaster) metricDisaster.textContent = gameState.epicDisasterLevel;
-  if (metricFlow) {
+  if (lastRenderedState.insightPoints !== gameState.insightPoints) {
+    insightCounter.textContent = gameState.insightPoints;
+    lastRenderedState.insightPoints = gameState.insightPoints;
+  }
+  const totalActivity =
+    Object.keys(gameState.collectedSteps).length +
+    gameState.epicDisasterLevel +
+    Object.keys(gameState.collectedHats).length;
+  const flowControl =
+    totalActivity > 0
+      ? (gameState.insightPoints / totalActivity).toFixed(2)
+      : 0;
+  if (
+    metricDisaster &&
+    lastRenderedState.epicDisasterLevel !== gameState.epicDisasterLevel
+  ) {
+    metricDisaster.textContent = gameState.epicDisasterLevel;
+    lastRenderedState.epicDisasterLevel = gameState.epicDisasterLevel;
+  }
+  if (metricFlow && lastRenderedState.flowControl !== flowControl) {
     metricFlow.textContent = flowControl;
-    metricFlow.className = flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+    metricFlow.className =
+      flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+    lastRenderedState.flowControl = flowControl;
   }
 }
 
@@ -119,31 +154,49 @@ function updateNavigation() {
   Object.keys(gameState.unlockedLevels).forEach((level) => {
     const btn = navButtons[level];
     const isLocked = !gameState.unlockedLevels[level];
-    if (btn) {
+    const isActive = parseInt(level) === gameState.currentLevel;
+
+    // Check if the state for this button has changed
+    const currentBtnState = lastRenderedState.unlockedLevels[level];
+    if (
+      btn &&
+      (!currentBtnState ||
+        currentBtnState.isLocked !== isLocked ||
+        currentBtnState.isActive !== isActive)
+    ) {
       btn.classList.toggle("nav-locked", isLocked);
-      btn.classList.toggle("nav-active", parseInt(level) === gameState.currentLevel);
+      btn.classList.toggle("nav-active", isActive);
       btn.disabled = isLocked;
+      lastRenderedState.unlockedLevels[level] = { isLocked, isActive };
     }
   });
 }
 
 function updateStepVisual(step) {
   const stepId = step.id;
-  if (gameState.collectedSteps[stepId]) {
-    step.classList.add("srap-active");
-    step.style.cursor = "default";
-  } else {
-    step.classList.remove("srap-active");
-    step.style.cursor = "pointer";
+  const isCollected = !!gameState.collectedSteps[stepId];
+  if (lastRenderedState.collectedSteps[stepId] !== isCollected) {
+    if (isCollected) {
+      step.classList.add("srap-active");
+      step.style.cursor = "default";
+    } else {
+      step.classList.remove("srap-active");
+      step.style.cursor = "pointer";
+    }
+    lastRenderedState.collectedSteps[stepId] = isCollected;
   }
 }
 
 function updateHatVisual(hat) {
   const hatType = hat.id.replace("hat-", "");
-  if (gameState.collectedHats[hatType]) {
-    hat.style.borderColor = "var(--neon-lime)";
-  } else {
-    hat.style.borderColor = "var(--neon-purple)";
+  const isCollected = !!gameState.collectedHats[hatType];
+  if (lastRenderedState.collectedHats[hatType] !== isCollected) {
+    if (isCollected) {
+      hat.style.borderColor = "var(--neon-lime)";
+    } else {
+      hat.style.borderColor = "var(--neon-purple)";
+    }
+    lastRenderedState.collectedHats[hatType] = isCollected;
   }
 }
 
@@ -163,7 +216,10 @@ function renderLevel(level) {
       showPaywallModal();
       return;
     }
-    showCustomAlert(`¡Calma, carnal! El Nivel ${level} está bloqueado.`, "Acceso Restringido");
+    showCustomAlert(
+      `¡Calma, carnal! El Nivel ${level} está bloqueado.`,
+      "Acceso Restringido",
+    );
     return;
   }
   gameState.currentLevel = level;
@@ -190,7 +246,8 @@ function applyCombo(points) {
   const now = Date.now();
   const timeDiff = (now - gameState.lastActivityTime) / 1000; // in seconds
 
-  if (timeDiff < 60) { // If less than a minute between activities
+  if (timeDiff < 60) {
+    // If less than a minute between activities
     gameState.comboCount++;
   } else {
     gameState.comboCount = 1;
@@ -233,18 +290,33 @@ const RITUALS = {
     execute: () => {
       gameState.epicDisasterLevel += 1;
       const roll = Math.random();
-      if (roll < 0.3) return { points: 5, message: "¡**SUPER INSIGHT**! El error te dio una visión épica." };
-      if (roll < 0.5) return { points: -2, message: "¡**CHAOS FEEDBACK**! El caos te recordó que el aprendizaje duele." };
-      return { points: 1, message: "¡Orale! Ganaste insight por atreverte al caos." };
-    }
+      if (roll < 0.3)
+        return {
+          points: 5,
+          message: "¡**SUPER INSIGHT**! El error te dio una visión épica.",
+        };
+      if (roll < 0.5)
+        return {
+          points: -2,
+          message:
+            "¡**CHAOS FEEDBACK**! El caos te recordó que el aprendizaje duele.",
+        };
+      return {
+        points: 1,
+        message: "¡Orale! Ganaste insight por atreverte al caos.",
+      };
+    },
   },
   fiesta: {
     title: "🌮 Fiesta Estratégica",
     execute: () => {
       gameState.epicDisasterLevel += 2;
-      return { points: 2, message: "¡Fiesta completa! Desastre Épico incrementa." };
-    }
-  }
+      return {
+        points: 2,
+        message: "¡Fiesta completa! Desastre Épico incrementa.",
+      };
+    },
+  },
 };
 
 function startChaosRitual(ritualType) {
@@ -266,7 +338,10 @@ function checkMandalaSynergy() {
       const bonus = 10;
       gameState.insightPoints += bonus;
       gameState.hatSequence = [];
-      showCustomAlert(`🎉 ¡SINERGIA CHALAMANDRA! 🎉 BONUS: +${bonus} Insights.`, "¡ÉPICO COMBO!");
+      showCustomAlert(
+        `🎉 ¡SINERGIA CHALAMANDRA! 🎉 BONUS: +${bonus} Insights.`,
+        "¡ÉPICO COMBO!",
+      );
       updateScores();
       return true;
     }
@@ -279,7 +354,8 @@ function revealHatInsight(element, hatType, insightText) {
   const points = 3;
   if (gameState.collectedHats[hatType]) {
     element.classList.toggle("hat-revealed", !isRevealed);
-    if (gameState.hatSequence[gameState.hatSequence.length - 1] !== hatType) gameState.hatSequence.push(hatType);
+    if (gameState.hatSequence[gameState.hatSequence.length - 1] !== hatType)
+      gameState.hatSequence.push(hatType);
     checkMandalaSynergy();
     return;
   }
@@ -287,7 +363,10 @@ function revealHatInsight(element, hatType, insightText) {
   gameState.collectedHats[hatType] = true;
   gameState.hatSequence.push(hatType);
   element.classList.add("hat-revealed");
-  showCustomAlert(`¡Sombrero **${hatType.toUpperCase()}** activado! +${gained} Insights.<br/><br/>**Tarea:** ${insightText}`, "Mandala Activo");
+  showCustomAlert(
+    `¡Sombrero **${hatType.toUpperCase()}** activado! +${gained} Insights.<br/><br/>**Tarea:** ${insightText}`,
+    "Mandala Activo",
+  );
   checkMandalaSynergy();
   updateScores();
   updateHatVisual(element);
