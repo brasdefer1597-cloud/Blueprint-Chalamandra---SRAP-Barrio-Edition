@@ -63,7 +63,9 @@ const modalMessage = document.getElementById("modal-message");
 
 function sanitizeHTML(html) {
   const doc = new DOMParser().parseFromString(html, "text/html");
-  const dangerousTags = doc.querySelectorAll("script, iframe, object, embed, base, form, math, svg");
+  const dangerousTags = doc.querySelectorAll(
+    "script, iframe, object, embed, base, form, math, svg",
+  );
   dangerousTags.forEach((el) => el.remove());
   const allElements = doc.querySelectorAll("*");
   allElements.forEach((el) => {
@@ -71,7 +73,12 @@ function sanitizeHTML(html) {
       const attr = el.attributes[i];
       const name = attr.name.toLowerCase();
       const value = attr.value.trim().toLowerCase();
-      if (name.startsWith("on") || name === "srcdoc" || value.startsWith("javascript:") || value.startsWith("data:")) {
+      if (
+        name.startsWith("on") ||
+        name === "srcdoc" ||
+        value.startsWith("javascript:") ||
+        value.startsWith("data:")
+      ) {
         el.removeAttribute(attr.name);
       }
     }
@@ -104,14 +111,50 @@ function showPaywallModal() {
   showCustomAlert(message, "ZONA VIP BLOQUEADA");
 }
 
+// Optimization: Cache last rendered state to prevent unnecessary DOM updates
+const lastRenderedState = {
+  insightPoints: null,
+  epicDisasterLevel: null,
+  flowControl: null,
+  flowControlClass: null,
+};
+
 function updateScores() {
-  insightCounter.textContent = gameState.insightPoints;
-  const totalActivity = Object.keys(gameState.collectedSteps).length + gameState.epicDisasterLevel + Object.keys(gameState.collectedHats).length;
-  const flowControl = totalActivity > 0 ? (gameState.insightPoints / totalActivity).toFixed(2) : 0;
-  if (metricDisaster) metricDisaster.textContent = gameState.epicDisasterLevel;
+  // Dirty checking for insightCounter
+  if (lastRenderedState.insightPoints !== gameState.insightPoints) {
+    insightCounter.textContent = gameState.insightPoints;
+    lastRenderedState.insightPoints = gameState.insightPoints;
+  }
+
+  const totalActivity =
+    Object.keys(gameState.collectedSteps).length +
+    gameState.epicDisasterLevel +
+    Object.keys(gameState.collectedHats).length;
+  const flowControl =
+    totalActivity > 0
+      ? (gameState.insightPoints / totalActivity).toFixed(2)
+      : 0;
+
+  // Dirty checking for metricDisaster
+  if (
+    metricDisaster &&
+    lastRenderedState.epicDisasterLevel !== gameState.epicDisasterLevel
+  ) {
+    metricDisaster.textContent = gameState.epicDisasterLevel;
+    lastRenderedState.epicDisasterLevel = gameState.epicDisasterLevel;
+  }
+
+  // Dirty checking for metricFlow
   if (metricFlow) {
-    metricFlow.textContent = flowControl;
-    metricFlow.className = flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+    if (lastRenderedState.flowControl !== flowControl) {
+      metricFlow.textContent = flowControl;
+      lastRenderedState.flowControl = flowControl;
+    }
+    const newClass = flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+    if (lastRenderedState.flowControlClass !== newClass) {
+      metricFlow.className = newClass;
+      lastRenderedState.flowControlClass = newClass;
+    }
   }
 }
 
@@ -121,7 +164,10 @@ function updateNavigation() {
     const isLocked = !gameState.unlockedLevels[level];
     if (btn) {
       btn.classList.toggle("nav-locked", isLocked);
-      btn.classList.toggle("nav-active", parseInt(level) === gameState.currentLevel);
+      btn.classList.toggle(
+        "nav-active",
+        parseInt(level) === gameState.currentLevel,
+      );
       btn.disabled = isLocked;
     }
   });
@@ -163,7 +209,10 @@ function renderLevel(level) {
       showPaywallModal();
       return;
     }
-    showCustomAlert(`¡Calma, carnal! El Nivel ${level} está bloqueado.`, "Acceso Restringido");
+    showCustomAlert(
+      `¡Calma, carnal! El Nivel ${level} está bloqueado.`,
+      "Acceso Restringido",
+    );
     return;
   }
   gameState.currentLevel = level;
@@ -190,7 +239,8 @@ function applyCombo(points) {
   const now = Date.now();
   const timeDiff = (now - gameState.lastActivityTime) / 1000; // in seconds
 
-  if (timeDiff < 60) { // If less than a minute between activities
+  if (timeDiff < 60) {
+    // If less than a minute between activities
     gameState.comboCount++;
   } else {
     gameState.comboCount = 1;
@@ -233,18 +283,33 @@ const RITUALS = {
     execute: () => {
       gameState.epicDisasterLevel += 1;
       const roll = Math.random();
-      if (roll < 0.3) return { points: 5, message: "¡**SUPER INSIGHT**! El error te dio una visión épica." };
-      if (roll < 0.5) return { points: -2, message: "¡**CHAOS FEEDBACK**! El caos te recordó que el aprendizaje duele." };
-      return { points: 1, message: "¡Orale! Ganaste insight por atreverte al caos." };
-    }
+      if (roll < 0.3)
+        return {
+          points: 5,
+          message: "¡**SUPER INSIGHT**! El error te dio una visión épica.",
+        };
+      if (roll < 0.5)
+        return {
+          points: -2,
+          message:
+            "¡**CHAOS FEEDBACK**! El caos te recordó que el aprendizaje duele.",
+        };
+      return {
+        points: 1,
+        message: "¡Orale! Ganaste insight por atreverte al caos.",
+      };
+    },
   },
   fiesta: {
     title: "🌮 Fiesta Estratégica",
     execute: () => {
       gameState.epicDisasterLevel += 2;
-      return { points: 2, message: "¡Fiesta completa! Desastre Épico incrementa." };
-    }
-  }
+      return {
+        points: 2,
+        message: "¡Fiesta completa! Desastre Épico incrementa.",
+      };
+    },
+  },
 };
 
 function startChaosRitual(ritualType) {
@@ -266,7 +331,10 @@ function checkMandalaSynergy() {
       const bonus = 10;
       gameState.insightPoints += bonus;
       gameState.hatSequence = [];
-      showCustomAlert(`🎉 ¡SINERGIA CHALAMANDRA! 🎉 BONUS: +${bonus} Insights.`, "¡ÉPICO COMBO!");
+      showCustomAlert(
+        `🎉 ¡SINERGIA CHALAMANDRA! 🎉 BONUS: +${bonus} Insights.`,
+        "¡ÉPICO COMBO!",
+      );
       updateScores();
       return true;
     }
@@ -279,7 +347,8 @@ function revealHatInsight(element, hatType, insightText) {
   const points = 3;
   if (gameState.collectedHats[hatType]) {
     element.classList.toggle("hat-revealed", !isRevealed);
-    if (gameState.hatSequence[gameState.hatSequence.length - 1] !== hatType) gameState.hatSequence.push(hatType);
+    if (gameState.hatSequence[gameState.hatSequence.length - 1] !== hatType)
+      gameState.hatSequence.push(hatType);
     checkMandalaSynergy();
     return;
   }
@@ -287,7 +356,10 @@ function revealHatInsight(element, hatType, insightText) {
   gameState.collectedHats[hatType] = true;
   gameState.hatSequence.push(hatType);
   element.classList.add("hat-revealed");
-  showCustomAlert(`¡Sombrero **${hatType.toUpperCase()}** activado! +${gained} Insights.<br/><br/>**Tarea:** ${insightText}`, "Mandala Activo");
+  showCustomAlert(
+    `¡Sombrero **${hatType.toUpperCase()}** activado! +${gained} Insights.<br/><br/>**Tarea:** ${insightText}`,
+    "Mandala Activo",
+  );
   checkMandalaSynergy();
   updateScores();
   updateHatVisual(element);
