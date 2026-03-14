@@ -63,15 +63,29 @@ const modalMessage = document.getElementById("modal-message");
 
 function sanitizeHTML(html) {
   const doc = new DOMParser().parseFromString(html, "text/html");
-  const dangerousTags = doc.querySelectorAll("script, iframe, object, embed, base, form, math, svg");
+  const dangerousTags = doc.querySelectorAll(
+    "script, iframe, object, embed, base, form, math, svg",
+  );
   dangerousTags.forEach((el) => el.remove());
   const allElements = doc.querySelectorAll("*");
   allElements.forEach((el) => {
     for (let i = el.attributes.length - 1; i >= 0; i--) {
       const attr = el.attributes[i];
       const name = attr.name.toLowerCase();
-      const value = attr.value.trim().toLowerCase();
-      if (name.startsWith("on") || name === "srcdoc" || value.startsWith("javascript:") || value.startsWith("data:")) {
+
+      // Strip control characters (0x00-0x20) and Unicode replacement char (\uFFFD) to prevent evasion
+      const value = attr.value
+        .replace(/[\x00-\x20\uFFFD]/g, "")
+        .trim()
+        .toLowerCase();
+
+      if (
+        name.startsWith("on") ||
+        name === "srcdoc" ||
+        value.startsWith("javascript:") ||
+        value.startsWith("data:") ||
+        value.startsWith("vbscript:")
+      ) {
         el.removeAttribute(attr.name);
       }
     }
@@ -106,12 +120,19 @@ function showPaywallModal() {
 
 function updateScores() {
   insightCounter.textContent = gameState.insightPoints;
-  const totalActivity = Object.keys(gameState.collectedSteps).length + gameState.epicDisasterLevel + Object.keys(gameState.collectedHats).length;
-  const flowControl = totalActivity > 0 ? (gameState.insightPoints / totalActivity).toFixed(2) : 0;
+  const totalActivity =
+    Object.keys(gameState.collectedSteps).length +
+    gameState.epicDisasterLevel +
+    Object.keys(gameState.collectedHats).length;
+  const flowControl =
+    totalActivity > 0
+      ? (gameState.insightPoints / totalActivity).toFixed(2)
+      : 0;
   if (metricDisaster) metricDisaster.textContent = gameState.epicDisasterLevel;
   if (metricFlow) {
     metricFlow.textContent = flowControl;
-    metricFlow.className = flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
+    metricFlow.className =
+      flowControl > 1.5 ? "text-lime-400" : "text-yellow-400";
   }
 }
 
@@ -121,7 +142,10 @@ function updateNavigation() {
     const isLocked = !gameState.unlockedLevels[level];
     if (btn) {
       btn.classList.toggle("nav-locked", isLocked);
-      btn.classList.toggle("nav-active", parseInt(level) === gameState.currentLevel);
+      btn.classList.toggle(
+        "nav-active",
+        parseInt(level) === gameState.currentLevel,
+      );
       btn.disabled = isLocked;
     }
   });
@@ -163,7 +187,10 @@ function renderLevel(level) {
       showPaywallModal();
       return;
     }
-    showCustomAlert(`¡Calma, carnal! El Nivel ${level} está bloqueado.`, "Acceso Restringido");
+    showCustomAlert(
+      `¡Calma, carnal! El Nivel ${level} está bloqueado.`,
+      "Acceso Restringido",
+    );
     return;
   }
   gameState.currentLevel = level;
@@ -190,7 +217,8 @@ function applyCombo(points) {
   const now = Date.now();
   const timeDiff = (now - gameState.lastActivityTime) / 1000; // in seconds
 
-  if (timeDiff < 60) { // If less than a minute between activities
+  if (timeDiff < 60) {
+    // If less than a minute between activities
     gameState.comboCount++;
   } else {
     gameState.comboCount = 1;
@@ -233,18 +261,33 @@ const RITUALS = {
     execute: () => {
       gameState.epicDisasterLevel += 1;
       const roll = Math.random();
-      if (roll < 0.3) return { points: 5, message: "¡**SUPER INSIGHT**! El error te dio una visión épica." };
-      if (roll < 0.5) return { points: -2, message: "¡**CHAOS FEEDBACK**! El caos te recordó que el aprendizaje duele." };
-      return { points: 1, message: "¡Orale! Ganaste insight por atreverte al caos." };
-    }
+      if (roll < 0.3)
+        return {
+          points: 5,
+          message: "¡**SUPER INSIGHT**! El error te dio una visión épica.",
+        };
+      if (roll < 0.5)
+        return {
+          points: -2,
+          message:
+            "¡**CHAOS FEEDBACK**! El caos te recordó que el aprendizaje duele.",
+        };
+      return {
+        points: 1,
+        message: "¡Orale! Ganaste insight por atreverte al caos.",
+      };
+    },
   },
   fiesta: {
     title: "🌮 Fiesta Estratégica",
     execute: () => {
       gameState.epicDisasterLevel += 2;
-      return { points: 2, message: "¡Fiesta completa! Desastre Épico incrementa." };
-    }
-  }
+      return {
+        points: 2,
+        message: "¡Fiesta completa! Desastre Épico incrementa.",
+      };
+    },
+  },
 };
 
 function startChaosRitual(ritualType) {
@@ -266,7 +309,10 @@ function checkMandalaSynergy() {
       const bonus = 10;
       gameState.insightPoints += bonus;
       gameState.hatSequence = [];
-      showCustomAlert(`🎉 ¡SINERGIA CHALAMANDRA! 🎉 BONUS: +${bonus} Insights.`, "¡ÉPICO COMBO!");
+      showCustomAlert(
+        `🎉 ¡SINERGIA CHALAMANDRA! 🎉 BONUS: +${bonus} Insights.`,
+        "¡ÉPICO COMBO!",
+      );
       updateScores();
       return true;
     }
@@ -279,7 +325,8 @@ function revealHatInsight(element, hatType, insightText) {
   const points = 3;
   if (gameState.collectedHats[hatType]) {
     element.classList.toggle("hat-revealed", !isRevealed);
-    if (gameState.hatSequence[gameState.hatSequence.length - 1] !== hatType) gameState.hatSequence.push(hatType);
+    if (gameState.hatSequence[gameState.hatSequence.length - 1] !== hatType)
+      gameState.hatSequence.push(hatType);
     checkMandalaSynergy();
     return;
   }
@@ -287,7 +334,10 @@ function revealHatInsight(element, hatType, insightText) {
   gameState.collectedHats[hatType] = true;
   gameState.hatSequence.push(hatType);
   element.classList.add("hat-revealed");
-  showCustomAlert(`¡Sombrero **${hatType.toUpperCase()}** activado! +${gained} Insights.<br/><br/>**Tarea:** ${insightText}`, "Mandala Activo");
+  showCustomAlert(
+    `¡Sombrero **${hatType.toUpperCase()}** activado! +${gained} Insights.<br/><br/>**Tarea:** ${insightText}`,
+    "Mandala Activo",
+  );
   checkMandalaSynergy();
   updateScores();
   updateHatVisual(element);
