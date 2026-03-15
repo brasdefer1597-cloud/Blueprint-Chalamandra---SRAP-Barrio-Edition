@@ -1,0 +1,4 @@
+## 2024-05-18 - [DOMParser Custom Sanitizer Bypass]
+**Vulnerability:** XSS bypass in custom `sanitizeHTML` function using control characters (e.g., `java\x00script:`, `java\tscript:`) or Unicode replacement characters (`\uFFFD`).
+**Learning:** When using `DOMParser` to parse HTML, it may insert `\uFFFD` characters for null bytes. If a custom sanitizer only matches attribute prefixes like `.startsWith("javascript:")` without first stripping control characters and `\uFFFD`, malicious payloads can bypass the check. Browsers ignore these control characters during URL parsing, allowing the XSS to execute.
+**Prevention:** Always strip control characters (`[\x00-\x20]`) and the Unicode replacement character (`\uFFFD`) from attribute values before attempting to validate them against restricted protocols like `javascript:`, `data:`, or `vbscript:`.
